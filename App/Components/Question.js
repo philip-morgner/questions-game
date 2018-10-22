@@ -4,20 +4,17 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 import jsonQuestions from "../../questions.json";
-
-const styles = StyleSheet.create({
-  question: {
-    fontSize: 24,
-  },
-});
+import { Font } from "expo";
 
 export default class Question extends React.Component {
   state = {
     questionsMap: new Map(),
+    fontsLoaded: false,
+    fonts: [],
   };
 
   prepareState = questionsMap => {
-    jsonQuestions.map(({ question, anotherOne }, index) => {
+    jsonQuestions.map(({ question }, index) => {
       questionsMap.set(index, question);
     });
     console.log(questionsMap);
@@ -33,16 +30,36 @@ export default class Question extends React.Component {
     });
   };
 
-  componentDidMount() {
-    console.log("component did mount");
+  async componentWillMount() {
+    await Font.loadAsync({
+      Calligraffitti: require("../../assets/fonts/Calligraffitti-Regular.ttf"),
+      GiveYouGlory: require("../../assets/fonts/GiveYouGlory.ttf"),
+      SedgewickAve: require("../../assets/fonts/SedgwickAve-Regular.ttf"),
+    });
+    const fonts = ["Calligraffitti", "GiveYouGlory", "SedgewickAve"];
+    this.setState({ fontsLoaded: true, fonts });
     this.fetchQuestions()
       .then(questionsMap => this.setState({ questionsMap }))
       .catch(console.log);
   }
 
+  randomFontFamily = () => {
+    const { fonts } = this.state;
+    return fonts[Math.floor(Math.random() * fonts.length)];
+  };
+
   renderQuestion = index => {
-    const { questionsMap } = this.state;
-    return <Text style={styles.question}>{questionsMap.get(index)}</Text>;
+    const { questionsMap, fontsLoaded } = this.state;
+    return (
+      <Text
+        style={{
+          fontSize: 36,
+          fontFamily: fontsLoaded ? this.randomFontFamily() : null,
+          textAlign: "center",
+        }}>
+        {questionsMap.get(index)}
+      </Text>
+    );
   };
 
   render() {

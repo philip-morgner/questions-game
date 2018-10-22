@@ -33,13 +33,10 @@ export default class Main extends React.Component {
   };
 
   handlePress = () => {
-    // make random question pattern
-    const { index } = this.state;
+    // make better random question pattern
+    const index = Math.floor(Math.random() * 6);
     console.log(index);
-    if (index === 6) {
-      return this.setState({ index: 0 });
-    }
-    return this.setState({ index: index + 1 });
+    this.setState({ index });
   };
 
   render() {
