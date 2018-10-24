@@ -1,9 +1,7 @@
-// @flow
-
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-import jsonQuestions from "../../questions.json";
+import jsonQuestions from "../../../questions.json";
 import { Font } from "expo";
 
 export default class Question extends React.Component {
@@ -32,9 +30,9 @@ export default class Question extends React.Component {
 
   async componentWillMount() {
     await Font.loadAsync({
-      Calligraffitti: require("../../assets/fonts/Calligraffitti-Regular.ttf"),
-      GiveYouGlory: require("../../assets/fonts/GiveYouGlory.ttf"),
-      SedgewickAve: require("../../assets/fonts/SedgwickAve-Regular.ttf"),
+      Calligraffitti: require("../../../assets/fonts/Calligraffitti-Regular.ttf"),
+      GiveYouGlory: require("../../../assets/fonts/GiveYouGlory.ttf"),
+      SedgewickAve: require("../../../assets/fonts/SedgwickAve-Regular.ttf"),
     });
     const fonts = ["Calligraffitti", "GiveYouGlory", "SedgewickAve"];
     this.setState({ fontsLoaded: true, fonts });

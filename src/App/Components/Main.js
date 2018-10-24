@@ -2,7 +2,7 @@
 
 import React from "react";
 import { View, Text, StyleSheet, TouchableWithoutFeedback } from "react-native";
-import Question from "./Question";
+import Question from "./Questions";
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -15,19 +15,19 @@ const styles = StyleSheet.create({
   },
 });
 
-// type Question = {
-//   [string]: string,
-// };
+type Q = {
+  [string]: string,
+};
 
-// type Props = {
-//   questions: Array<Question>,
-// };
+type Props = {
+  questions: Array<Q>,
+};
 
-// type State = {
-//   index: number,
-// };
+type State = {
+  index: number,
+};
 
-export default class Main extends React.Component {
+export default class Main extends React.Component<Props, State> {
   state = {
     index: 0,
   };
