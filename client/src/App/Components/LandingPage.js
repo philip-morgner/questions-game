@@ -1,14 +1,7 @@
 // @flow
 
 import React from "react";
-import {
-  StyleSheet,
-  NavigatorIOS,
-  Text,
-  View,
-  Button,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, View } from "react-native";
 import NavButton from "./NavButton";
 import type { Route } from "./NavButton";
 import Menu from "./Menu";
@@ -29,6 +22,7 @@ type Props = {
 
 type State = {};
 
+// stateless => rewrite!
 export default class LandingPage extends React.Component<Props, State> {
   render() {
     const { navigator } = this.props;

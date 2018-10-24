@@ -2,8 +2,8 @@
 
 import React from "react";
 import { StyleSheet, NavigatorIOS, Text, View } from "react-native";
-// import Main from "./src/App/Components/Main";
 import LandingPage from "./src/App/Components/LandingPage";
+import PlayerSetUpList from "./src/App/Components/PlayerSetUpList";
 
 const pageStyle = StyleSheet.create({
   nav: {

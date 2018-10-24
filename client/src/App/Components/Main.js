@@ -1,11 +1,11 @@
 // @flow
 
 import React from "react";
-import { View, Text, StyleSheet, TouchableHighlight } from "react-native";
-import Question from "./Questions";
+import { View, Text, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import Question from "./Question";
 
 const styles = StyleSheet.create({
-  mainContainer: {
+  page: {
     flex: 1,
     backgroundColor: "#48BBEC",
     alignItems: "center",
@@ -13,12 +13,12 @@ const styles = StyleSheet.create({
   },
 });
 
-type Q = {
-  [string]: string,
-};
+// type Q = {
+//   question: string,
+// };
 
 type Props = {
-  questions: Array<Q>,
+  // questions: Array<Q>,
 };
 
 type State = {
@@ -40,11 +40,11 @@ export default class Main extends React.Component<Props, State> {
   render() {
     const { index } = this.state;
     return (
-      <TouchableHighlight onPress={this.handlePress}>
-        <View style={styles.mainContainer}>
+      <TouchableWithoutFeedback onPress={this.handlePress}>
+        <View style={styles.page}>
           <Question index={index} />
         </View>
-      </TouchableHighlight>
+      </TouchableWithoutFeedback>
     );
   }
 }

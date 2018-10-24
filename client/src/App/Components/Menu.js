@@ -10,70 +10,42 @@ import {
   TouchableHighlight,
 } from "react-native";
 import NavButton from "./NavButton";
+import type { Route } from "./NavButton";
 import Main from "./Main";
+import PlayerSetUpList from "./PlayerSetUpList";
 import AddQuestionUI from "./AddQuestionUI";
 
-const pageStyle = StyleSheet.create({
-  text: {
+const styles = StyleSheet.create({
+  page: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    display: "flex",
   },
 });
 
+const menuOptions = [
+  { title: "START", component: PlayerSetUpList },
+  { title: "ADD A QUESTION", component: AddQuestionUI },
+  { title: "LOREM IPSUM", component: Main },
+  { title: "LOREM IPSUM", component: Main },
+];
+
 type Props = {
-  route: {
-    title: string,
-  },
   navigator: Object,
 };
 
 type State = {};
 
+// stateless => rewrite!
 export default class Menu extends React.Component<Props, State> {
-  onForward = (component: Object) => () => {
-    this.props.navigator.push({
-      component,
-      title: "Title",
-    });
+  renderMenuButton = (route: Route, i: number) => {
+    const { navigator } = this.props;
+    return <NavButton key={i} route={route} navigator={navigator} />;
   };
-
-  renderMenuButton = ({ title, component }: Object, index: number) => {
-    return (
-      // <TouchableHighlight
-      //   key={index}
-      //   style={{
-      //     marginTop: 10,
-      //     width: "80%",
-      //     backgroundColor: "lightblue",
-      //     alignItems: "center",
-      //     padding: 10,
-      //   }}
-      // onPress={this.onForward(component)}>
-      <Button
-        onPress={this.onForward(component)}
-        key={index}
-        title={title}
-        style={{
-          marginTop: 10,
-          width: "80%",
-          backgroundColor: "lightblue",
-          alignItems: "center",
-          padding: 10,
-        }}
-      />
-      // </TouchableHighlight>
-    );
-  };
-
   render() {
-    const menuOptions = [{ title: "Start the Game", component: Main }];
     return (
-      <View style={pageStyle.text}>
-        {menuOptions.map(({ title, component }, i) =>
-          this.renderMenuButton({ title, component }, i)
-        )}
+      <View style={styles.page}>
+        {menuOptions.map((route, i) => this.renderMenuButton(route, i))}
       </View>
     );
   }
