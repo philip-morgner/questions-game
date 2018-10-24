@@ -1,7 +1,7 @@
 // @flow
 
 import React from "react";
-import { View, Text, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import { View, Text, StyleSheet, TouchableHighlight } from "react-native";
 import Question from "./Questions";
 
 const styles = StyleSheet.create({
@@ -10,8 +10,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#48BBEC",
     alignItems: "center",
     justifyContent: "center",
-    // flexDirection: 'column',
-    // marginTop: 65,
   },
 });
 
@@ -42,11 +40,11 @@ export default class Main extends React.Component<Props, State> {
   render() {
     const { index } = this.state;
     return (
-      <TouchableWithoutFeedback onPress={this.handlePress}>
+      <TouchableHighlight onPress={this.handlePress}>
         <View style={styles.mainContainer}>
           <Question index={index} />
         </View>
-      </TouchableWithoutFeedback>
+      </TouchableHighlight>
     );
   }
 }

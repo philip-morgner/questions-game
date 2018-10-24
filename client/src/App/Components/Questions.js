@@ -33,6 +33,8 @@ export default class Question extends React.Component {
       Calligraffitti: require("../../../assets/fonts/Calligraffitti-Regular.ttf"),
       GiveYouGlory: require("../../../assets/fonts/GiveYouGlory.ttf"),
       SedgewickAve: require("../../../assets/fonts/SedgwickAve-Regular.ttf"),
+      BalooBhai: require("../../../assets/fonts/BalooBhai-Regular.ttf"),
+      Mogra: require("../../../assets/fonts/Mogra-Regular.ttf"),
     });
     const fonts = ["Calligraffitti", "GiveYouGlory", "SedgewickAve"];
     this.setState({ fontsLoaded: true, fonts });
@@ -41,10 +43,10 @@ export default class Question extends React.Component {
       .catch(console.log);
   }
 
-  randomFontFamily = () => {
-    const { fonts } = this.state;
-    return fonts[Math.floor(Math.random() * fonts.length)];
-  };
+  // randomFontFamily = () => {
+  //   const { fonts } = this.state;
+  //   return fonts[Math.floor(Math.random() * fonts.length)];
+  // };
 
   renderQuestion = index => {
     const { questionsMap, fontsLoaded } = this.state;
@@ -52,7 +54,7 @@ export default class Question extends React.Component {
       <Text
         style={{
           fontSize: 36,
-          fontFamily: fontsLoaded ? this.randomFontFamily() : null,
+          fontFamily: fontsLoaded ? "BalooBhaigud" : null,
           textAlign: "center",
         }}>
         {questionsMap.get(index)}
