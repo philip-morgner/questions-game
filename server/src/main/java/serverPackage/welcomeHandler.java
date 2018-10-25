@@ -16,7 +16,7 @@ public class welcomeHandler implements HttpHandler{
 		System.out.println("Incoming query from: "+he.getRemoteAddress().getAddress());
 		
 		//read html-file
-		String htmlfile ="welcome.html";
+		String htmlfile ="/home/biermann/Dokumente/Etc./qgame/questions-game/server/src/main/java/serverPackage/welcome.html";
 		StringBuilder buildhtml = new StringBuilder();
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(htmlfile));
