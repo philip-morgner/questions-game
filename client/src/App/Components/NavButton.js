@@ -5,8 +5,6 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Font } from "expo";
 
-// later: react-navigation
-
 export type Route = {
   component: Object,
   title: string,
@@ -15,7 +13,7 @@ export type Route = {
 
 type Props = {
   route: Route,
-  navigator: Object,
+  navigation: Object,
   color?: string,
 };
 type State = { fontLoaded: boolean };
@@ -44,7 +42,7 @@ const styles = (fontLoaded: boolean) => (colorProp?: string) =>
   });
 // light: #2EB3FF normal: #2E93FF
 
-export default class NavButton extends React.Component<Props, State> {
+class NavButton extends React.Component<Props, State> {
   state = { fontLoaded: false };
 
   async componentWillMount() {
@@ -55,7 +53,7 @@ export default class NavButton extends React.Component<Props, State> {
   }
 
   navigateTo = (route: Route) => () => {
-    this.props.navigator.push(route);
+    this.props.navigation.navigate(route);
   };
 
   render() {
@@ -64,7 +62,7 @@ export default class NavButton extends React.Component<Props, State> {
     return (
       <TouchableOpacity
         style={styleReady().container}
-        onPress={this.navigateTo(route)}>
+        onPress={this.navigateTo(route.title)}>
         <View style={styleReady(color).button}>
           <Text style={styleReady().buttonText}>{route.title}</Text>
         </View>
@@ -72,3 +70,5 @@ export default class NavButton extends React.Component<Props, State> {
     );
   }
 }
+
+export default NavButton;

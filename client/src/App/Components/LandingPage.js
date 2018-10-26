@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
 });
 
 type Props = {
-  navigator: Object,
+  navigation: Object,
 };
 
 type State = {};
@@ -25,14 +25,14 @@ type State = {};
 // stateless => rewrite!
 export default class LandingPage extends React.Component<Props, State> {
   render() {
-    const { navigator } = this.props;
+    const { navigation } = this.props;
     const route = {
       component: Menu,
-      title: "START THE GAME",
+      title: "Menu",
     };
     return (
       <View key="start-the-game" style={styles.page}>
-        <NavButton route={route} navigator={navigator} />
+        <NavButton route={route} navigation={navigation} />
       </View>
     );
   }

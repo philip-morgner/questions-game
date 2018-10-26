@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
-import { CheckBox, ButtonGroup, Divider } from "react-native-elements";
+import { CheckBox, ButtonGroup } from "react-native-elements";
 
 // check for unnecessary stuff
 const styles = StyleSheet.create({
@@ -52,6 +52,7 @@ type Props = {};
 
 type State = Player;
 
+// later: adding
 export default class PlayerSetUp extends React.Component<Props, State> {
   state = {
     name: "",
@@ -61,7 +62,6 @@ export default class PlayerSetUp extends React.Component<Props, State> {
 
   handleChangeText = (name: string) => {
     this.setState({ name });
-    console.log(name);
   };
 
   renderNameInput = () => {

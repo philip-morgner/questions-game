@@ -20,15 +20,15 @@ import type { Player } from "./PlayerSetUp";
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    height: 200,
   },
   list: {
     alignItems: "center",
+    paddingTop: 65,
   },
   input: {
     alignSelf: "flex-start",
     height: 20,
-    marginLeft: 16,
+    marginLeft: 32,
   },
   buttonGroup: {
     alignSelf: "center",
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
 });
 
 type Props = {
-  navigator: Object,
+  navigation: Object,
 };
 
 type State = {
@@ -55,9 +55,9 @@ export default class PlayerSetUpList extends React.Component<Props, State> {
     this.handleNumberOfPlayers = debounce(this.handleNumberOfPlayers, 300);
   }
 
-  // later: debounce it
+  // later: validate input, hide keyboard
   handleNumberOfPlayers = (numberOfPlayers: number) => {
-    // Keyboard.dismiss();
+    Keyboard.dismiss();
     this.setState({ numberOfPlayers });
   };
 
@@ -74,22 +74,8 @@ export default class PlayerSetUpList extends React.Component<Props, State> {
     );
   };
 
-  // renderNumberOfPlayersBar = () => {
-  //   const n = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  //   return (
-  //     <ButtonGroup
-  //       onPress={this.handleNumberOfPlayers}
-  //       selectedIndex={this.state.numberOfPlayers + 1}
-  //       buttons={n}
-  //       containerStyle={styles.buttonGroup}
-  //       innerBorderStyle={{ color: "white" }}
-  //     />
-  //   );
-  // };
-
   renderPlayerSetUp = (key: number) => () => {
-    key += 1;
-    return <PlayerSetUp key={key} />;
+    return <PlayerSetUp key={key++} />;
   };
 
   renderPlayerSetUpList = (n: number) => {
@@ -98,10 +84,10 @@ export default class PlayerSetUpList extends React.Component<Props, State> {
   };
 
   renderSubmit = () => {
-    const { navigator } = this.props;
-    //   later passProps category
-    const route = { title: "START", component: Main };
-    return <NavButton route={route} navigator={navigator} />;
+    const { navigation } = this.props;
+    //  later passProps category
+    const route = { title: "Main", component: Main };
+    return <NavButton route={route} navigation={navigation} />;
   };
   render() {
     const { numberOfPlayers } = this.state;

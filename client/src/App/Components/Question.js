@@ -1,7 +1,7 @@
 // flow has issues with map and promise types
 
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
 import { Font } from "expo";
 import jsonQuestions from "../../../questions.json";
 
@@ -16,7 +16,6 @@ export default class Question extends React.Component {
     jsonQuestions.map(({ question }, index) => {
       questionsMap.set(index, question);
     });
-    console.log(questionsMap);
     return questionsMap;
   };
 
@@ -30,12 +29,9 @@ export default class Question extends React.Component {
   };
 
   async componentWillMount() {
+    // add nice font family, use style sheet
     await Font.loadAsync({
-      // Calligraffitti: require("../../../assets/fonts/Calligraffitti-Regular.ttf"),
-      // GiveYouGlory: require("../../../assets/fonts/GiveYouGlory.ttf"),
-      // SedgewickAve: require("../../../assets/fonts/SedgwickAve-Regular.ttf"),
       BalooBhai: require("../../../assets/fonts/BalooBhai-Regular.ttf"),
-      // Mogra: require("../../../assets/fonts/Mogra-Regular.ttf"),
     });
     const fonts = ["Calligraffitti", "GiveYouGlory", "SedgewickAve"];
     this.setState({ fontsLoaded: true });
@@ -43,11 +39,6 @@ export default class Question extends React.Component {
       .then(questionsMap => this.setState({ questionsMap }))
       .catch(console.log);
   }
-
-  // randomFontFamily = () => {
-  //   const { fonts } = this.state;
-  //   return fonts[Math.floor(Math.random() * fonts.length)];
-  // };
 
   renderQuestion = index => {
     const { questionsMap, fontsLoaded } = this.state;
@@ -64,7 +55,6 @@ export default class Question extends React.Component {
   };
 
   render() {
-    console.log("hallo");
     const { index } = this.props;
     return <View>{this.renderQuestion(index)}</View>;
   }

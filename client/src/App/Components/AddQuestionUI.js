@@ -29,29 +29,6 @@ export default class AddQuestionUI extends React.Component<Props, State> {
     text: "",
   };
 
-  //   const Http = new XMLHttpRequest();
-  //   const url='https://jsonplaceholder.typicode.com/posts';
-  //   Http.open("GET", url);
-  //   Http.send();
-  //   Http.onreadystatechange=(e)=>{
-  //   console.log(Http.responseText)
-  //   }
-
-  // const http = new XMLHttpRequest();
-  // const url = 'get_data.php';
-  // const params = 'orem=ipsum&name=binny';
-  // http.open('POST', url, true);
-
-  // //Send the proper header information along with the request
-  // http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-  // http.onreadystatechange = () => {//Call a function when the state changes.
-  //     if(http.readyState == 4 && http.status == 200) {
-  //         alert(http.responseText);
-  //     }
-  // }
-  // http.send(params);
-
   handleChangeText = (text: string) => {
     this.setState({ text });
   };

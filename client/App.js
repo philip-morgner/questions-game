@@ -1,30 +1,31 @@
 // @flow
 
 import React from "react";
-import { StyleSheet, NavigatorIOS, Text, View } from "react-native";
+import { createStackNavigator } from "react-navigation";
+
 import LandingPage from "./src/App/Components/LandingPage";
 import PlayerSetUpList from "./src/App/Components/PlayerSetUpList";
+import Main from "./src/App/Components/Main";
+import Menu from "./src/App/Components/Menu";
+import AddQuestionUI from "./src/App/Components/AddQuestionUI";
 
-const pageStyle = StyleSheet.create({
-  nav: {
-    flex: 1,
+const RootStack = createStackNavigator(
+  {
+    Home: LandingPage,
+    PlayerSetUpList: PlayerSetUpList,
+    Main: Main,
+    Menu: Menu,
+    AddQuestionUI: AddQuestionUI,
   },
-});
-
+  {
+    initialRouteName: "Home",
+    navigationOptions: {
+      header: null,
+    },
+  }
+);
 export default class App extends React.Component<{}, {}> {
   render() {
-    return (
-      <NavigatorIOS
-        style={pageStyle.nav}
-        initialRoute={{
-          title: "My First Title",
-          component: LandingPage,
-        }}
-        navigationBarHidden={true}
-        // translucent={true}
-        // itemWrapperStyle={}
-        // interactivePopGestureEnabled={true}
-      />
-    );
+    return <RootStack />;
   }
 }

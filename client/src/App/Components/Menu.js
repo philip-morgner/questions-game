@@ -1,14 +1,7 @@
 // @flow
 import PropTypes from "prop-types";
 import React from "react";
-import {
-  StyleSheet,
-  NavigatorIOS,
-  Text,
-  View,
-  Button,
-  TouchableHighlight,
-} from "react-native";
+import { StyleSheet, View } from "react-native";
 import NavButton from "./NavButton";
 import type { Route } from "./NavButton";
 import Main from "./Main";
@@ -24,14 +17,14 @@ const styles = StyleSheet.create({
 });
 
 const menuOptions = [
-  { title: "START", component: PlayerSetUpList },
-  { title: "ADD A QUESTION", component: AddQuestionUI },
-  { title: "LOREM IPSUM", component: Main },
-  { title: "LOREM IPSUM", component: Main },
+  { title: "PlayerSetUpList", component: PlayerSetUpList },
+  { title: "AddQuestionUI", component: AddQuestionUI },
+  { title: "Main", component: Main },
+  { title: "Main", component: Main },
 ];
 
 type Props = {
-  navigator: Object,
+  navigation: Object,
 };
 
 type State = {};
@@ -39,8 +32,8 @@ type State = {};
 // stateless => rewrite!
 export default class Menu extends React.Component<Props, State> {
   renderMenuButton = (route: Route, i: number) => {
-    const { navigator } = this.props;
-    return <NavButton key={i} route={route} navigator={navigator} />;
+    const { navigation } = this.props;
+    return <NavButton key={i} route={route} navigation={navigation} />;
   };
   render() {
     return (

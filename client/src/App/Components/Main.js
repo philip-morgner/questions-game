@@ -1,7 +1,7 @@
 // @flow
 
 import React from "react";
-import { View, Text, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import Question from "./Question";
 
 const styles = StyleSheet.create({
@@ -13,13 +13,7 @@ const styles = StyleSheet.create({
   },
 });
 
-// type Q = {
-//   question: string,
-// };
-
-type Props = {
-  // questions: Array<Q>,
-};
+type Props = {};
 
 type State = {
   index: number,
@@ -33,7 +27,6 @@ export default class Main extends React.Component<Props, State> {
   handlePress = () => {
     // make better random question pattern
     const index = Math.floor(Math.random() * 6);
-    console.log(index);
     this.setState({ index });
   };
 
