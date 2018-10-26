@@ -55,7 +55,7 @@ type State = Player;
 export default class PlayerSetUp extends React.Component<Props, State> {
   state = {
     name: "",
-    sex: false,
+    sex: true,
     selectedLevel: 1,
   };
 
