@@ -48,10 +48,10 @@ public class serverMain {
 	
 	
 	public static void main(String[] args) {//normal way to start
-		serverMain service;
+		serverMain server;
 		try {
-			service = new serverMain();
-			service.start();
+			server = new serverMain();
+			server.start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

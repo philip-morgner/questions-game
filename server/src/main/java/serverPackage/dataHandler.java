@@ -14,10 +14,14 @@ public class dataHandler implements HttpHandler{
 
 	private final databaseAccess database;
 	
-	public dataHandler(databaseAccess data) {
+	public dataHandler(databaseAccess data) {//uses the same databaseAccess as serverMain
 		database = data;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see com.sun.net.httpserver.HttpHandler#handle(com.sun.net.httpserver.HttpExchange)
+	 */
 	public void handle(HttpExchange he) throws IOException {
 		//status message
 		String ipAddress = he.getRequestHeaders().getFirst("X-FORWARDED-FOR");  
@@ -34,6 +38,9 @@ public class dataHandler implements HttpHandler{
 		}
 	}
 	
+	/*
+	 * Responses to a GET request with a JSON-Array of {"question", "array"}
+	 */
 	private void echoGet(HttpExchange he) throws IOException {
 		//standard
 		boolean l=false;
@@ -78,10 +85,13 @@ public class dataHandler implements HttpHandler{
 		send(he, response, "application/json", 200);
 	}
 	
+	/*
+	 * Reads request body of a POST request and stores a sent Question
+	 */
 	private void echoPost(HttpExchange he) throws IOException {
 		Question q;
 		String[] npw= new String[2];
-		try {
+		try {//read Question and name/ password
 			q = readQuestion(he, npw);
 		}catch (IOException ex) {
 			System.out.println("Request body couldn't be read, sending error msg");
@@ -118,6 +128,9 @@ public class dataHandler implements HttpHandler{
 		}
 	}
 	
+	/*
+	 * Read question and name and password from the request body
+	 */
 	private Question readQuestion(HttpExchange he, String[] npw) throws IOException {
 		//read body as string
 		InputStreamReader isr = new InputStreamReader(he.getRequestBody(), "utf-8");
@@ -168,6 +181,9 @@ public class dataHandler implements HttpHandler{
 		return newone;
 	}
 	
+	/*
+	 * Reads players from JSON- String to LinkedList<Player>
+	 */
 	private LinkedList<Player> readPlayers(String json) throws IOException {
 		//decode uri-encoding
 		json = json.replace("%5B", "");//remove " and [ and ] and { and " "
@@ -176,6 +192,7 @@ public class dataHandler implements HttpHandler{
 		json=json.replace("%7B", "");
 		json=json.replace("%20", "");
 		json=json.replace("%7D", "}");//decode
+		
 		//translate json-array-string to array of json-strings
 		int count = json.length() - json.replace("}", "").length();
 		String[] playerarr;
@@ -199,6 +216,9 @@ public class dataHandler implements HttpHandler{
 		return list;
 	}
 	
+	/*
+	 * Translates JSON- String of a player to Player Object
+	 */
 	private Player readPlayer(String json) throws IOException {
 		//standard
 		int alc = 2;
@@ -223,12 +243,19 @@ public class dataHandler implements HttpHandler{
 		return new Player(name, sex, alc);
 	}
 	
+	/*
+	 * Sends a response via an HttpExchange of a type with a status code
+	 */
 	private void send(HttpExchange he, String response, String type, int status) throws IOException {
-		//send response with the right headers
+		//set headers
 		Headers head = he.getResponseHeaders();
 		head.set("Content-Type", String.format(type+"; charset=%s", StandardCharsets.UTF_8));
+		
+		//prepare response
 		byte[] rawResponse = response.getBytes(StandardCharsets.UTF_8);
 		he.sendResponseHeaders(status, rawResponse.length);
+		
+		//send response
 		he.getResponseBody().write(rawResponse);
 		System.out.println("Response was sent:\n"+response);
 		

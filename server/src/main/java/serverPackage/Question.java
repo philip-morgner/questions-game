@@ -1,6 +1,6 @@
 package serverPackage;
 
-public class Question {
+class Question {//simple interface to ease datahandling in other classes
 
 	String question;
 	String answer;

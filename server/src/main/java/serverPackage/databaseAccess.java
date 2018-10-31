@@ -10,11 +10,15 @@ import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.LinkedList;
 
-public class databaseAccess{//TODO: admin-mode options for webinterface
+class databaseAccess{//TODO: admin-mode options for webinterface
 	
 	private static final int MAX_NUM_QUESTIONS = 1024;
 	
+	/*
+	 * Reads custom entries by means of getFromDb and refactors the question strings
+	 */
 	public String getQuestions(String lang, boolean lflag, boolean oflag, boolean cflag, LinkedList<Player> players) {
+		//read values from playerarray
 		int maxalc = 0;
 		int[] m = new int[3];
 		int[] f = new int[3];
@@ -27,12 +31,16 @@ public class databaseAccess{//TODO: admin-mode options for webinterface
 			if(p.sex.equals("f"))for(int i = p.alc; i>=0; i--)f[i]++;
 			if(p.alc>maxalc)maxalc = p.alc;
 		}
-		String json = "[";
+		
+		//read entries and shuffle
 		LinkedList<Question> quests = getFromDb(lang, lflag, oflag, cflag, maxalc, m, f);
 		Collections.shuffle(quests);
+		//build JSON
+		String json = "[";
 		for(int i = 0; i<MAX_NUM_QUESTIONS&&i<quests.size();i++) {
 			Question q = quests.get(i);
 			Collections.shuffle(players);
+			//refactor question (replace %m, %f and %p)
 			for(Player p : players) {
 				if(!q.question.contains("%m")&&!q.question.contains("%f")&&!q.question.contains("%p")) {
 					break;
@@ -53,17 +61,27 @@ public class databaseAccess{//TODO: admin-mode options for webinterface
 		return json;
 	}
 	
+	/*
+	 * Store question, could be marked as to-be-reviewed
+	 */
 	public void storeQuestion(Question quest, boolean marked) {//TODO
 		storeInFile(quest);
 	}
 	
+	/*
+	 * get custom questions from database
+	 */
 	private LinkedList<Question> getFromDb(String lang, boolean l, boolean o, boolean c, int maxalc, int[] m, int[] f){//TODO
 		LinkedList<Question> list = getFromFile(lang, l, o, c, maxalc, m, f);
 		return list;
 	}
 	
+	/*
+	 * testing: get custom questions from file
+	 */
 	private LinkedList<Question> getFromFile(String lang, boolean l, boolean o, boolean c, int maxalc, int[] m, int[] f){
 		LinkedList<Question> list = new LinkedList<Question>();
+		//read file as LinkedList<String> (lines)
 		FileReader fr = null;
 		try {
 			fr = new FileReader("/home/biermann/.questgame/fakedb.txt");
@@ -84,6 +102,7 @@ public class databaseAccess{//TODO: admin-mode options for webinterface
 			return list;
 		}
 		
+		//parse strings in list to questions
 		for(String str: liste) {
 			String question = str.substring(str.indexOf("question: ")+10, str.indexOf(", answer:"));
 			String answer = str.substring(str.indexOf("answer: ")+8, str.indexOf(", alc:"));
@@ -98,6 +117,7 @@ public class databaseAccess{//TODO: admin-mode options for webinterface
 			
 			Question qu = new Question(question, answer, currlang, curralc, curroflag, currlflag);
 			
+			//add question if according to custom values
 			if(currlang.equalsIgnoreCase(lang)&&curralc<=maxalc&&(!currlflag||l)&&(!curroflag||o)&&(c||currlflag||curroflag)&&currm<=m[curralc]&&currf<=f[curralc]&&currp<=m[curralc]+f[curralc]) {
 				list.add(qu);
 			}
@@ -106,7 +126,11 @@ public class databaseAccess{//TODO: admin-mode options for webinterface
 		return list;
 	}
 	
+	/*
+	 * testing: store Question in file
+	 */
 	private void storeInFile(Question quest) {
+		//read in custom values for storing the question
 		int o = 0;
 		int l = 0;
 		if(quest.outdoor)o=1;
@@ -114,8 +138,9 @@ public class databaseAccess{//TODO: admin-mode options for webinterface
 		int p = (quest.question.length() - quest.question.replace("%p", "").length())/2;
 		int f = (quest.question.length() - quest.question.replace("%f", "").length())/2;
 		int m = (quest.question.length() - quest.question.replace("%m", "").length())/2;
+		//string to write to file
 		String write = "question: "+quest.question+", answer: "+quest.answer+", alc: "+quest.alc+", oflag: "+o+", flag: "+l+", lang: "+quest.lang+", m: "+m+", f: "+f+", p: "+p+"\n";
-		try {
+		try {//write
 			Files.write(Paths.get("/home/biermann/.questgame/fakedb.txt"), write.getBytes(), StandardOpenOption.APPEND);
 		} catch (IOException e) {
 			System.out.println("Fehler im Testfall... na toll");

@@ -1,6 +1,6 @@
 package serverPackage;
 
-public class Player {
+class Player {//simple interface to ease datahandling in other classes
 	
 	String name;
 	String sex;
