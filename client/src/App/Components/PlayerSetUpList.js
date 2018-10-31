@@ -47,35 +47,23 @@ type State = {
 };
 
 export default class PlayerSetUpList extends React.Component<Props, State> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      numberOfPlayers: 10,
-    };
-    this.handleNumberOfPlayers = debounce(this.handleNumberOfPlayers, 300);
-  }
-
-  // later: validate input, hide keyboard
-  handleNumberOfPlayers = (numberOfPlayers: number) => {
-    Keyboard.dismiss();
-    this.setState({ numberOfPlayers });
+  state = {
+    numberOfPlayers: 1,
   };
 
-  renderNumberOfPlayersInput = () => {
-    return (
-      <TextInput
-        clearTextOnFocus
-        style={styles.input}
-        placeholder="Anzahl der Spieler..."
-        keyboardType="numeric"
-        maxLength={2}
-        onChangeText={this.handleNumberOfPlayers}
-      />
-    );
+  handleAddPlayer = () => {
+    this.setState({ numberOfPlayers: this.state.numberOfPlayers + 1 });
   };
 
   renderPlayerSetUp = (key: number) => () => {
-    return <PlayerSetUp key={key++} />;
+    console.log("key", key);
+    return (
+      <PlayerSetUp
+        key={key++}
+        activate={this.handleAddPlayer}
+        active={this.state.numberOfPlayers > key}
+      />
+    );
   };
 
   renderPlayerSetUpList = (n: number) => {
@@ -94,7 +82,6 @@ export default class PlayerSetUpList extends React.Component<Props, State> {
     return (
       <View styles={styles.page}>
         <ScrollView contentContainerStyle={styles.list}>
-          {this.renderNumberOfPlayersInput()}
           {this.renderPlayerSetUpList(numberOfPlayers)}
           {this.renderSubmit()}
         </ScrollView>
