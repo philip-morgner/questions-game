@@ -25,7 +25,7 @@ class welcomeHandler implements HttpHandler{
 		
 		if(he.getRequestMethod().equalsIgnoreCase("GET"))echoGet(he);
 		else {
-			System.out.println("Wrong request method was used, sending error message");
+			System.out.println("Wrong request method was used, sending error message\nMethod: "+he.getRequestMethod());
 			send(he, "{ \"Error\": \"Http method not supported. Please use GET\" }", "application/json", 405);
 		}
 	}

@@ -33,7 +33,7 @@ public class dataHandler implements HttpHandler{
 		if(he.getRequestMethod().equalsIgnoreCase("GET"))echoGet(he);
 		else if(he.getRequestMethod().equalsIgnoreCase("POST"))echoPost(he);
 		else {
-			System.out.println("Wrong request method was used, sending error message");
+			System.out.println("Wrong request method was used, sending error message\nUsed method: "+he.getRequestMethod());
 			send(he, "{ \"Error\": \"Http method not supported. Please use GET or POST\" }", "application/json", 405);
 		}
 	}
@@ -66,8 +66,8 @@ public class dataHandler implements HttpHandler{
 		
 		//minimal query: one player and one flag true
 		if((!l&&!o&&!c)||playerjson.equals("")) {
-			System.out.println("Query was formatted wrong, sending error");
-			send(he, "{ \"Error\": \"Query formatted wrongly.\" }", "application/json", 400);
+			System.out.println("Query was formatted wrong, sending error\nQuery: "+query);
+			send(he, "{ \"Error\": \"Query has wrong format.\" }", "application/json", 400);
 			return;
 		}
 		
@@ -76,8 +76,8 @@ public class dataHandler implements HttpHandler{
 		try {
 			players = readPlayers(playerjson);
 		} catch (IOException ex) {
-			System.out.println("Playerarray couldn't be read, sending error msg");
-			send(he, "{ \"Error\": \"players from the query couldn't be read.\" }", "application/json", 400);
+			System.out.println("Playerarray couldn't be read, sending error msg\nString: "+playerjson);
+			send(he, "{ \"Error\": \"Couldn't read players from query.\" }", "application/json", 400);
 			return;
 		}
 		
@@ -95,7 +95,7 @@ public class dataHandler implements HttpHandler{
 			q = readQuestion(he, npw);
 		}catch (IOException ex) {
 			System.out.println("Request body couldn't be read, sending error msg");
-			send(he, "{ \"Error\": \"Request body couldn't be read.\" }", "application/json", 400);
+			send(he, "{ \"Error\": \"Couldn't read request body.\" }", "application/json", 400);
 			return;
 		}
 		if(npw[0].equals("")) {//store question in non-admin-mode
