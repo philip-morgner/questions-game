@@ -1,10 +1,7 @@
 # questions-game
 
+requirements: expo, yarn
 
 How to start:
 
-cd client && npm start
-
-or
-
-cd client && expo start
+cd client && yarn start
