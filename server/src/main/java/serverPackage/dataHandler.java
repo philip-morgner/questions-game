@@ -34,7 +34,7 @@ public class dataHandler implements HttpHandler{
 		else if(he.getRequestMethod().equalsIgnoreCase("POST"))echoPost(he);
 		else {
 			System.out.println("Wrong request method was used, sending error message\nUsed method: "+he.getRequestMethod());
-			send(he, "{ \"Error\": \"Http method not supported. Please use GET or POST\" }", "application/json", 405);
+			send(he, "\"error\": { \"message\": \"Http method not supported. Please use GET or POST\", \"code\": 0 }", "application/json", 405);
 		}
 	}
 	
@@ -67,7 +67,7 @@ public class dataHandler implements HttpHandler{
 		//minimal query: one player and one flag true
 		if((!l&&!o&&!c)||playerjson.equals("")) {
 			System.out.println("Query was formatted wrong, sending error\nQuery: "+query);
-			send(he, "{ \"Error\": \"Query has wrong format.\" }", "application/json", 400);
+			send(he, "\"error\": { \"message\": \"Query has wrong format.\", \"code\": 2 }", "application/json", 400);
 			return;
 		}
 		
@@ -77,7 +77,7 @@ public class dataHandler implements HttpHandler{
 			players = readPlayers(playerjson);
 		} catch (IOException ex) {
 			System.out.println("Playerarray couldn't be read, sending error msg\nString: "+playerjson);
-			send(he, "{ \"Error\": \"Couldn't read players from query.\" }", "application/json", 400);
+			send(he, "\"error\": { \"message\": \"Couldn't read players from query.\", \"code\": 3 }", "application/json", 400);
 			return;
 		}
 		
@@ -95,7 +95,7 @@ public class dataHandler implements HttpHandler{
 			q = readQuestion(he, npw);
 		}catch (IOException ex) {
 			System.out.println("Request body couldn't be read, sending error msg");
-			send(he, "{ \"Error\": \"Couldn't read request body.\" }", "application/json", 400);
+			send(he, "\"error\": { \"message\": \"Couldn't read request body.\", \"code\": 4 }", "application/json", 400);
 			return;
 		}
 		if(npw[0].equals("")) {//store question in non-admin-mode
@@ -123,7 +123,7 @@ public class dataHandler implements HttpHandler{
 				send(he, "OK", "text/plain", 200);
 			}else {
 				System.out.println("Wrong logindata, sending error message");
-				send(he, "{ \"Error\": \"Login failed\" }", "application/json", 403);
+				send(he, "\"error\": { \"message\": \"Login failed\", \"code\": 5 }", "application/json", 403);
 			}
 		}
 	}

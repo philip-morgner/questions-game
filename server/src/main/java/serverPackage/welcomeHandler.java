@@ -26,7 +26,7 @@ class welcomeHandler implements HttpHandler{
 		if(he.getRequestMethod().equalsIgnoreCase("GET"))echoGet(he);
 		else {
 			System.out.println("Wrong request method was used, sending error message\nMethod: "+he.getRequestMethod());
-			send(he, "{ \"Error\": \"Http method not supported. Please use GET\" }", "application/json", 405);
+			send(he, "\"error\": { \"message\": \"Http method not supported. Please use GET\", \"code\": 0 }", "application/json", 405);
 		}
 	}
 	
@@ -46,7 +46,7 @@ class welcomeHandler implements HttpHandler{
 			in.close();
 		} catch(IOException ex) {
 			System.out.println("Reading HTML File failed, sending error message");
-			send(he, "{ \"Error\": \"Failed to read the corresponding HTML File.\" }", "application/json", 500);
+			send(he, "\"error\": { \"message\": \"Failed to read the corresponding HTML File.\", \"code\": 1 }", "application/json", 500);
 			return;
 		}
 		
