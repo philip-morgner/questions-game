@@ -42,6 +42,7 @@ public class dataHandler implements HttpHandler{
 	 * Responses to a GET request with a JSON-Array of {"question", "array"}
 	 */
 	private void echoGet(HttpExchange he) throws IOException {
+		System.out.println("GET ");
 		//standard
 		boolean l=false;
 		boolean o=false;
@@ -80,6 +81,8 @@ public class dataHandler implements HttpHandler{
 			send(he, "\"error\": { \"message\": \"Couldn't read players from query.\", \"code\": 3 }", "application/json", 400);
 			return;
 		}
+		
+		System.out.println("l: "+l+", o: "+o+", c: "+c+", lang: "+lang+", players: "+players);
 		
 		String response = this.database.getQuestions(lang, l, o, c, players);//TODO: Exception handling
 		send(he, response, "application/json", 200);
@@ -139,11 +142,12 @@ public class dataHandler implements HttpHandler{
 		StringBuilder buf = new StringBuilder();
 		while((b=br.read()) != -1)buf.append((char)b);
 		String obj = buf.toString();
+		if(obj.equals(""))throw new IOException();
 
 		//standard
 		npw[0]="";
 		npw[1]="";
-		int alc = 2;
+		int level = 2;
 		String question = "";
 		String answer = "";
 		boolean l=false;
@@ -165,7 +169,7 @@ public class dataHandler implements HttpHandler{
 			if(par[0].equalsIgnoreCase("lflag"))l=par[1].equals("1");
 			if(par[0].equalsIgnoreCase("oflag"))o=par[1].equals("1");
 			if(par[0].equalsIgnoreCase("lang"))lang=par[1];
-			if(par[0].equalsIgnoreCase("alc"))alc=Integer.parseInt(par[1]);
+			if(par[0].equalsIgnoreCase("level"))level=Integer.parseInt(par[1]);
 			if(par[0].equalsIgnoreCase("question"))question=par[1];
 			if(par[0].equalsIgnoreCase("answer"))answer=par[1];
 			if(par[0].equalsIgnoreCase("name"))npw[0]=par[1];
@@ -175,7 +179,7 @@ public class dataHandler implements HttpHandler{
 		//requirement to pass: question must not be standard
 		if(question.equals(""))throw new IOException();
 		
-		Question newone = new Question(question,answer,lang,alc,o,l);
+		Question newone = new Question(question,answer,lang,level,o,l);
 		
 		//create and return new question with params
 		return newone;
@@ -221,7 +225,7 @@ public class dataHandler implements HttpHandler{
 	 */
 	private Player readPlayer(String json) throws IOException {
 		//standard
-		int alc = 2;
+		int level = -1;
 		String name = "";
 		String sex = "";
 		
@@ -232,15 +236,17 @@ public class dataHandler implements HttpHandler{
 			param[i] = params[i].split(":");
 		}
 		for(String[] par : param) {
-			if(par[0].equalsIgnoreCase("alc"))alc=Integer.parseInt(par[1]);
+			if(par[0].equalsIgnoreCase("level"))level=Integer.parseInt(par[1]);
 			if(par[0].equalsIgnoreCase("name"))name=par[1];
 			if(par[0].equalsIgnoreCase("sex"))sex=par[1];
 		}
 		
-		//requirements to pass: name/ sex must not be standard, alc must be 0 to 2
-		if(name.equals("")||(!sex.equalsIgnoreCase("m")&&!sex.equalsIgnoreCase("f"))||alc<0||alc>2)throw new IOException();
+		//requirements to pass: name/ sex must not be standard, level must be 0 to 2
+		if(name.equals("")||(!sex.equalsIgnoreCase("m")&&!sex.equalsIgnoreCase("f"))||level<0||level>2)throw new IOException();
 		
-		return new Player(name, sex, alc);
+		Player newone = new Player(name, sex, level);
+		
+		return newone;
 	}
 	
 	/*
