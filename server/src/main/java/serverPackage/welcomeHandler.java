@@ -26,7 +26,7 @@ class welcomeHandler implements HttpHandler{
 		if(he.getRequestMethod().equalsIgnoreCase("GET"))echoGet(he);
 		else {
 			System.out.println("Wrong request method was used, sending error message\nMethod: "+he.getRequestMethod());
-			send(he, "\"error\": { \"message\": \"Http method not supported. Please use GET\", \"code\": 0 }", "application/json", 405);
+			send(he, "\"error\":{ \"message\": \"Http method not supported. Please use GET\", \"code\": 0 }", "application/json", 405);
 		}
 	}
 	
@@ -35,7 +35,7 @@ class welcomeHandler implements HttpHandler{
 	 */
 	private void echoGet(HttpExchange he) throws IOException {
 		//read html-file
-		String htmlfile ="/home/biermann/Dokumente/Etc./qgame/questions-game/server/src/main/java/serverPackage/welcome.html";
+		String htmlfile ="/home/biermann/Dokumente/Etc/qgame/questions-game/server/src/main/java/serverPackage/welcome.html";
 		StringBuilder buildhtml = new StringBuilder();
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(htmlfile));

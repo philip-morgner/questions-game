@@ -45,7 +45,7 @@ public class dataHandler implements HttpHandler{
 		//standard
 		boolean l=false;
 		boolean o=false;
-		boolean c=false;
+		boolean c=true;
 		String lang = "ger";
 		String playerjson = "";
 		
