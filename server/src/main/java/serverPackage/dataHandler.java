@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.LinkedList;
 
 import com.sun.net.httpserver.*;
@@ -52,21 +50,47 @@ public class dataHandler implements HttpHandler{
 		
 		//read params from query
 		String query = he.getRequestURI().getRawQuery();
-		if(query != null) {
+		System.out.println("Query: "+query);
+		if(query != null && !query.equals("")) {
 			String [] params = query.split("&");
-			String param[][] = new String[params.length][2];
-			for(int i=0;i<params.length;i++)param[i]=params[i].split("=");
+			String param[][] = new String[params.length][];
+			for(int i=0;i<params.length;i++) {
+				param[i]=params[i].split("=");
+				if(param[i].length!=2) {
+					System.out.println("Query was formatted wrong, sending error\nQuery: "+query);
+					send(he, "\"error\": { \"message\": \"Query has wrong format.\", \"code\": 2 }", "application/json", 400);
+					return;
+				}
+			}
+			System.out.println(params.length);
 			for(String[] par : param) {
+				System.out.println(par.length);
+				if(par[0]==null||par[1]==null) {
+					System.out.println("null");
+					break;
+				}
+				if(par[0].equals("")||par[1].equals("")) {
+					System.out.println("empty");
+					break;
+				}
+				if(par[0].equals("\0")||par[1].equals("\0")) {
+					System.out.println("0");
+					break;
+				}
+				System.out.println(par[0]+": "+par[1]);
 				if(par[0].equalsIgnoreCase("l"))l=par[1].equals("1");
 				if(par[0].equalsIgnoreCase("o"))o=par[1].equals("1");
 				if(par[0].equalsIgnoreCase("c"))c=par[1].equals("1");
 				if(par[0].equalsIgnoreCase("lang"))lang=par[1].toLowerCase();
 				if(par[0].equalsIgnoreCase("players"))playerjson=par[1];
 			}
+			System.out.println("for-loop done");
 		}
 		
+		System.out.println("playerjson: "+playerjson);
+		
 		//minimal query: one player and one flag true
-		if((!l&&!o&&!c)||playerjson.equals("")) {
+		if((!l&&!o&&!c)||playerjson.equals("")||playerjson==null||playerjson.equals("\0")) {
 			System.out.println("Query was formatted wrong, sending error\nQuery: "+query);
 			send(he, "\"error\": { \"message\": \"Query has wrong format.\", \"code\": 2 }", "application/json", 400);
 			return;
@@ -107,7 +131,7 @@ public class dataHandler implements HttpHandler{
 		}
 		else {
 			//read logindata and compare with entered stuff
-			String loginpath = "/home/biermann/.questgame/login.txt";
+			String loginpath = "/home/max/.questgame/login.txt";
 			FileReader fr = new FileReader(loginpath);
 			BufferedReader in = new BufferedReader(fr);
 			String data = in.readLine();
@@ -255,10 +279,10 @@ public class dataHandler implements HttpHandler{
 	private void send(HttpExchange he, String response, String type, int status) throws IOException {
 		//set headers
 		Headers head = he.getResponseHeaders();
-		head.set("Content-Type", String.format(type+"; charset=%s", StandardCharsets.UTF_8));
+		head.set("Content-Type", String.format(type+"; charset=utf-8"));
 		
 		//prepare response
-		byte[] rawResponse = response.getBytes(StandardCharsets.UTF_8);
+		byte[] rawResponse = response.getBytes();
 		he.sendResponseHeaders(status, rawResponse.length);
 		
 		//send response

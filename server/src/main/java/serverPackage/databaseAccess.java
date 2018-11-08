@@ -1,12 +1,12 @@
 package serverPackage;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.LinkedList;
 
@@ -143,11 +143,16 @@ class databaseAccess{//TODO: admin-mode options for webinterface
 		int m = (quest.question.length() - quest.question.replace("%m", "").length())/2;
 		//string to write to file
 		String write = "question: "+quest.question+", answer: "+quest.answer+", level: "+quest.level+", oflag: "+o+", flag: "+l+", lang: "+quest.lang+", m: "+m+", f: "+f+", p: "+p+"\n";
-		try {//write
-			Files.write(Paths.get("/home/biermann/.questgame/fakedb.txt"), write.getBytes(), StandardOpenOption.APPEND);
+		FileWriter fw;
+		try {
+			fw = new FileWriter("/home/max/.questgame/fakedb.txt", true);
 		} catch (IOException e) {
 			System.out.println("Fehler im Testfall... na toll");
 			return;
 		}
+	    BufferedWriter bw = new BufferedWriter(fw);
+	    PrintWriter out = new PrintWriter(bw);
+	    out.print(write);
+	    out.close();
 	}
 }
