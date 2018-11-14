@@ -12,8 +12,11 @@ public class dataHandler implements HttpHandler{
 
 	private final databaseAccess database;
 	
-	public dataHandler(databaseAccess data) {//uses the same databaseAccess as serverMain
+	private final String homepath;
+	
+	public dataHandler(databaseAccess data, String homepath) {//uses the same databaseAccess as serverMain
 		database = data;
+		this.homepath = homepath;
 	}
 	
 	/*
@@ -110,7 +113,7 @@ public class dataHandler implements HttpHandler{
 		}
 		else {
 			//read logindata and compare with entered stuff
-			String loginpath = "/home/max/.questgame/login.txt";
+			String loginpath = homepath+"/.questgame/login.txt";
 			FileReader fr = new FileReader(loginpath);
 			BufferedReader in = new BufferedReader(fr);
 			String data = in.readLine();

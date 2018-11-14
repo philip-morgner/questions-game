@@ -34,7 +34,7 @@ class welcomeHandler implements HttpHandler{
 	 */
 	private void echoGet(HttpExchange he) throws IOException {
 		//read html-file
-		String htmlfile ="/home/max/Documents/Etc/qgame/questions-game/server/src/main/java/serverPackage/welcome.html";
+		String htmlfile =System.getProperty("user.dir")+"/src/main/java/serverPackage/welcome.html";
 		StringBuilder buildhtml = new StringBuilder();
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(htmlfile));
