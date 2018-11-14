@@ -85,13 +85,12 @@ class databaseAccess{//TODO: admin-mode options for webinterface
 		//read file as LinkedList<String> (lines)
 		FileReader fr = null;
 		try {
-			fr = new FileReader("/home/biermann/.questgame/fakedb.txt");
+			fr = new FileReader("/home/max/.questgame/fakedb.txt");
 		} catch (FileNotFoundException e) {
 			System.out.println("Fehler im Testfall... na toll");
 			return list;
 		}
 		
-		System.out.println("hi");
 		BufferedReader br = new BufferedReader(fr);
 		LinkedList<String> liste = new LinkedList<String>();
 		String curr;

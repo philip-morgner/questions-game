@@ -40,7 +40,6 @@ public class dataHandler implements HttpHandler{
 	 * Responses to a GET request with a JSON-Array of {"question", "array"}
 	 */
 	private void echoGet(HttpExchange he) throws IOException {
-		System.out.println("GET ");
 		//standard
 		boolean l=false;
 		boolean o=false;
@@ -50,7 +49,6 @@ public class dataHandler implements HttpHandler{
 		
 		//read params from query
 		String query = he.getRequestURI().getRawQuery();
-		System.out.println("Query: "+query);
 		if(query != null && !query.equals("")) {
 			String [] params = query.split("&");
 			String param[][] = new String[params.length][];
@@ -62,32 +60,15 @@ public class dataHandler implements HttpHandler{
 					return;
 				}
 			}
-			System.out.println(params.length);
 			for(String[] par : param) {
-				System.out.println(par.length);
-				if(par[0]==null||par[1]==null) {
-					System.out.println("null");
-					break;
-				}
-				if(par[0].equals("")||par[1].equals("")) {
-					System.out.println("empty");
-					break;
-				}
-				if(par[0].equals("\0")||par[1].equals("\0")) {
-					System.out.println("0");
-					break;
-				}
-				System.out.println(par[0]+": "+par[1]);
 				if(par[0].equalsIgnoreCase("l"))l=par[1].equals("1");
 				if(par[0].equalsIgnoreCase("o"))o=par[1].equals("1");
 				if(par[0].equalsIgnoreCase("c"))c=par[1].equals("1");
 				if(par[0].equalsIgnoreCase("lang"))lang=par[1].toLowerCase();
 				if(par[0].equalsIgnoreCase("players"))playerjson=par[1];
 			}
-			System.out.println("for-loop done");
 		}
 		
-		System.out.println("playerjson: "+playerjson);
 		
 		//minimal query: one player and one flag true
 		if((!l&&!o&&!c)||playerjson.equals("")||playerjson==null||playerjson.equals("\0")) {
@@ -105,8 +86,6 @@ public class dataHandler implements HttpHandler{
 			send(he, "\"error\": { \"message\": \"Couldn't read players from query.\", \"code\": 3 }", "application/json", 400);
 			return;
 		}
-		
-		System.out.println("l: "+l+", o: "+o+", c: "+c+", lang: "+lang+", players: "+players);
 		
 		String response = this.database.getQuestions(lang, l, o, c, players);//TODO: Exception handling
 		send(he, response, "application/json", 200);
@@ -190,11 +169,15 @@ public class dataHandler implements HttpHandler{
 			else if(param[i][1].charAt(0)==' ')param[i][1]=param[i][1].substring(1);
 		}
 		for(String[] par : param) {
+			if(par[0].equalsIgnoreCase("question")) {
+				par[0]=par[1];
+				par[1]=par[2];
+			}
 			if(par[0].equalsIgnoreCase("lflag"))l=par[1].equals("1");
 			if(par[0].equalsIgnoreCase("oflag"))o=par[1].equals("1");
 			if(par[0].equalsIgnoreCase("lang"))lang=par[1];
 			if(par[0].equalsIgnoreCase("level"))level=Integer.parseInt(par[1]);
-			if(par[0].equalsIgnoreCase("question"))question=par[1];
+			if(par[0].equalsIgnoreCase("str"))question=par[1];
 			if(par[0].equalsIgnoreCase("answer"))answer=par[1];
 			if(par[0].equalsIgnoreCase("name"))npw[0]=par[1];
 			if(par[0].equalsIgnoreCase("password"))npw[1]=par[1];
@@ -220,7 +203,6 @@ public class dataHandler implements HttpHandler{
 		json=json.replace("%7B", "");
 		json=json.replace("%20", "");
 		json=json.replace("%7D", "}");//decode
-		
 		//translate json-array-string to array of json-strings
 		int count = json.length() - json.replace("}", "").length();
 		String[] playerarr;
