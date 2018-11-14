@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.LinkedList;
 
 import com.sun.net.httpserver.*;
@@ -34,7 +32,7 @@ public class dataHandler implements HttpHandler{
 		else if(he.getRequestMethod().equalsIgnoreCase("POST"))echoPost(he);
 		else {
 			System.out.println("Wrong request method was used, sending error message\nUsed method: "+he.getRequestMethod());
-			send(he, "{ \"Error\": \"Http method not supported. Please use GET or POST\" }", "application/json", 405);
+			send(he, "\"error\": { \"message\": \"Http method not supported. Please use GET or POST\", \"code\": 0 }", "application/json", 405);
 		}
 	}
 	
@@ -45,16 +43,23 @@ public class dataHandler implements HttpHandler{
 		//standard
 		boolean l=false;
 		boolean o=false;
-		boolean c=false;
+		boolean c=true;
 		String lang = "ger";
 		String playerjson = "";
 		
 		//read params from query
 		String query = he.getRequestURI().getRawQuery();
-		if(query != null) {
+		if(query != null && !query.equals("")) {
 			String [] params = query.split("&");
-			String param[][] = new String[params.length][2];
-			for(int i=0;i<params.length;i++)param[i]=params[i].split("=");
+			String param[][] = new String[params.length][];
+			for(int i=0;i<params.length;i++) {
+				param[i]=params[i].split("=");
+				if(param[i].length!=2) {
+					System.out.println("Query was formatted wrong, sending error\nQuery: "+query);
+					send(he, "\"error\": { \"message\": \"Query has wrong format.\", \"code\": 2 }", "application/json", 400);
+					return;
+				}
+			}
 			for(String[] par : param) {
 				if(par[0].equalsIgnoreCase("l"))l=par[1].equals("1");
 				if(par[0].equalsIgnoreCase("o"))o=par[1].equals("1");
@@ -64,10 +69,11 @@ public class dataHandler implements HttpHandler{
 			}
 		}
 		
+		
 		//minimal query: one player and one flag true
-		if((!l&&!o&&!c)||playerjson.equals("")) {
+		if((!l&&!o&&!c)||playerjson.equals("")||playerjson==null||playerjson.equals("\0")) {
 			System.out.println("Query was formatted wrong, sending error\nQuery: "+query);
-			send(he, "{ \"Error\": \"Query has wrong format.\" }", "application/json", 400);
+			send(he, "\"error\": { \"message\": \"Query has wrong format.\", \"code\": 2 }", "application/json", 400);
 			return;
 		}
 		
@@ -77,7 +83,7 @@ public class dataHandler implements HttpHandler{
 			players = readPlayers(playerjson);
 		} catch (IOException ex) {
 			System.out.println("Playerarray couldn't be read, sending error msg\nString: "+playerjson);
-			send(he, "{ \"Error\": \"Couldn't read players from query.\" }", "application/json", 400);
+			send(he, "\"error\": { \"message\": \"Couldn't read players from query.\", \"code\": 3 }", "application/json", 400);
 			return;
 		}
 		
@@ -95,7 +101,7 @@ public class dataHandler implements HttpHandler{
 			q = readQuestion(he, npw);
 		}catch (IOException ex) {
 			System.out.println("Request body couldn't be read, sending error msg");
-			send(he, "{ \"Error\": \"Couldn't read request body.\" }", "application/json", 400);
+			send(he, "\"error\": { \"message\": \"Couldn't read request body.\", \"code\": 4 }", "application/json", 400);
 			return;
 		}
 		if(npw[0].equals("")) {//store question in non-admin-mode
@@ -104,7 +110,7 @@ public class dataHandler implements HttpHandler{
 		}
 		else {
 			//read logindata and compare with entered stuff
-			String loginpath = "/home/biermann/.questgame/login.txt";
+			String loginpath = "/home/max/.questgame/login.txt";
 			FileReader fr = new FileReader(loginpath);
 			BufferedReader in = new BufferedReader(fr);
 			String data = in.readLine();
@@ -123,7 +129,7 @@ public class dataHandler implements HttpHandler{
 				send(he, "OK", "text/plain", 200);
 			}else {
 				System.out.println("Wrong logindata, sending error message");
-				send(he, "{ \"Error\": \"Login failed\" }", "application/json", 403);
+				send(he, "\"error\": { \"message\": \"Login failed\", \"code\": 5 }", "application/json", 403);
 			}
 		}
 	}
@@ -139,11 +145,12 @@ public class dataHandler implements HttpHandler{
 		StringBuilder buf = new StringBuilder();
 		while((b=br.read()) != -1)buf.append((char)b);
 		String obj = buf.toString();
+		if(obj.equals(""))throw new IOException();
 
 		//standard
 		npw[0]="";
 		npw[1]="";
-		int alc = 2;
+		int level = 2;
 		String question = "";
 		String answer = "";
 		boolean l=false;
@@ -162,11 +169,15 @@ public class dataHandler implements HttpHandler{
 			else if(param[i][1].charAt(0)==' ')param[i][1]=param[i][1].substring(1);
 		}
 		for(String[] par : param) {
+			if(par[0].equalsIgnoreCase("question")) {
+				par[0]=par[1];
+				par[1]=par[2];
+			}
 			if(par[0].equalsIgnoreCase("lflag"))l=par[1].equals("1");
 			if(par[0].equalsIgnoreCase("oflag"))o=par[1].equals("1");
 			if(par[0].equalsIgnoreCase("lang"))lang=par[1];
-			if(par[0].equalsIgnoreCase("alc"))alc=Integer.parseInt(par[1]);
-			if(par[0].equalsIgnoreCase("question"))question=par[1];
+			if(par[0].equalsIgnoreCase("level"))level=Integer.parseInt(par[1]);
+			if(par[0].equalsIgnoreCase("str"))question=par[1];
 			if(par[0].equalsIgnoreCase("answer"))answer=par[1];
 			if(par[0].equalsIgnoreCase("name"))npw[0]=par[1];
 			if(par[0].equalsIgnoreCase("password"))npw[1]=par[1];
@@ -175,7 +186,7 @@ public class dataHandler implements HttpHandler{
 		//requirement to pass: question must not be standard
 		if(question.equals(""))throw new IOException();
 		
-		Question newone = new Question(question,answer,lang,alc,o,l);
+		Question newone = new Question(question,answer,lang,level,o,l);
 		
 		//create and return new question with params
 		return newone;
@@ -192,7 +203,6 @@ public class dataHandler implements HttpHandler{
 		json=json.replace("%7B", "");
 		json=json.replace("%20", "");
 		json=json.replace("%7D", "}");//decode
-		
 		//translate json-array-string to array of json-strings
 		int count = json.length() - json.replace("}", "").length();
 		String[] playerarr;
@@ -221,7 +231,7 @@ public class dataHandler implements HttpHandler{
 	 */
 	private Player readPlayer(String json) throws IOException {
 		//standard
-		int alc = 2;
+		int level = -1;
 		String name = "";
 		String sex = "";
 		
@@ -232,15 +242,17 @@ public class dataHandler implements HttpHandler{
 			param[i] = params[i].split(":");
 		}
 		for(String[] par : param) {
-			if(par[0].equalsIgnoreCase("alc"))alc=Integer.parseInt(par[1]);
+			if(par[0].equalsIgnoreCase("level"))level=Integer.parseInt(par[1]);
 			if(par[0].equalsIgnoreCase("name"))name=par[1];
 			if(par[0].equalsIgnoreCase("sex"))sex=par[1];
 		}
 		
-		//requirements to pass: name/ sex must not be standard, alc must be 0 to 2
-		if(name.equals("")||(!sex.equalsIgnoreCase("m")&&!sex.equalsIgnoreCase("f"))||alc<0||alc>2)throw new IOException();
+		//requirements to pass: name/ sex must not be standard, level must be 0 to 2
+		if(name.equals("")||(!sex.equalsIgnoreCase("m")&&!sex.equalsIgnoreCase("f"))||level<0||level>2)throw new IOException();
 		
-		return new Player(name, sex, alc);
+		Player newone = new Player(name, sex, level);
+		
+		return newone;
 	}
 	
 	/*
@@ -249,10 +261,10 @@ public class dataHandler implements HttpHandler{
 	private void send(HttpExchange he, String response, String type, int status) throws IOException {
 		//set headers
 		Headers head = he.getResponseHeaders();
-		head.set("Content-Type", String.format(type+"; charset=%s", StandardCharsets.UTF_8));
+		head.set("Content-Type", String.format(type+"; charset=utf-8"));
 		
 		//prepare response
-		byte[] rawResponse = response.getBytes(StandardCharsets.UTF_8);
+		byte[] rawResponse = response.getBytes();
 		he.sendResponseHeaders(status, rawResponse.length);
 		
 		//send response

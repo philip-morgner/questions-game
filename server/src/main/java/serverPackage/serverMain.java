@@ -53,8 +53,7 @@ public class serverMain {
 			server = new serverMain();
 			server.start();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Fehler beim Serverstart");
 		}
 	}
 }

@@ -1,7 +1,6 @@
 package serverPackage;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 
 import com.sun.net.httpserver.*;
 
@@ -26,7 +25,7 @@ class welcomeHandler implements HttpHandler{
 		if(he.getRequestMethod().equalsIgnoreCase("GET"))echoGet(he);
 		else {
 			System.out.println("Wrong request method was used, sending error message\nMethod: "+he.getRequestMethod());
-			send(he, "{ \"Error\": \"Http method not supported. Please use GET\" }", "application/json", 405);
+			send(he, "\"error\":{ \"message\": \"Http method not supported. Please use GET\", \"code\": 0 }", "application/json", 405);
 		}
 	}
 	
@@ -35,7 +34,7 @@ class welcomeHandler implements HttpHandler{
 	 */
 	private void echoGet(HttpExchange he) throws IOException {
 		//read html-file
-		String htmlfile ="/home/biermann/Dokumente/Etc./qgame/questions-game/server/src/main/java/serverPackage/welcome.html";
+		String htmlfile ="/home/max/Documents/Etc/qgame/questions-game/server/src/main/java/serverPackage/welcome.html";
 		StringBuilder buildhtml = new StringBuilder();
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(htmlfile));
@@ -46,7 +45,7 @@ class welcomeHandler implements HttpHandler{
 			in.close();
 		} catch(IOException ex) {
 			System.out.println("Reading HTML File failed, sending error message");
-			send(he, "{ \"Error\": \"Failed to read the corresponding HTML File.\" }", "application/json", 500);
+			send(he, "\"error\": { \"message\": \"Failed to read the corresponding HTML File.\", \"code\": 1 }", "application/json", 500);
 			return;
 		}
 		
@@ -62,10 +61,10 @@ class welcomeHandler implements HttpHandler{
 	private void send(HttpExchange he, String response, String type, int status) throws IOException {
 		//set headers
 		Headers head = he.getResponseHeaders();
-		head.set("Content-Type", String.format(type+"; charset=%s", StandardCharsets.UTF_8));
+		head.set("Content-Type", String.format(type+"; charset=utf-8"));
 		
 		//prepare response
-		byte[] rawResponse = response.getBytes(StandardCharsets.UTF_8);
+		byte[] rawResponse = response.getBytes();
 		he.sendResponseHeaders(status, rawResponse.length);
 		
 		//send response

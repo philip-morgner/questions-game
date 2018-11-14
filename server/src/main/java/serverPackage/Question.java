@@ -5,7 +5,7 @@ class Question {//simple interface to ease datahandling in other classes
 	String question;
 	String answer;
 	String lang;
-	int alc;
+	int level;
 	boolean outdoor;
 	boolean love;
 	
@@ -13,13 +13,13 @@ class Question {//simple interface to ease datahandling in other classes
 		this.question = q;
 		this.answer = answer;
 		this.lang=lang;
-		this.alc=a;
+		this.level=a;
 		this.outdoor=o;
 		this.love=l;
 	}
 	
 	public String toString() {
-		return "question: "+question+", answer: "+answer+", language: "+lang+", alc: "+alc+", outdoor: "+outdoor+", love: "+love;
+		return "question: "+question+", answer: "+answer+", language: "+lang+", level: "+level+", outdoor: "+outdoor+", love: "+love;
 	}
 	
 	public String toJSON() {
