@@ -11,6 +11,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 class databaseAccess{//TODO: admin-mode options for webinterface
+	private final String homepath;
+	public databaseAccess(String homepath) {
+		this.homepath = homepath;
+	}
 	
 	private static final int MAX_NUM_QUESTIONS = 1024;
 	
@@ -85,7 +89,7 @@ class databaseAccess{//TODO: admin-mode options for webinterface
 		//read file as LinkedList<String> (lines)
 		FileReader fr = null;
 		try {
-			fr = new FileReader("/home/max/.questgame/fakedb.txt");
+			fr = new FileReader(homepath+"/.questgame/fakedb.txt");
 		} catch (FileNotFoundException e) {
 			System.out.println("Fehler im Testfall... na toll");
 			return list;
@@ -144,7 +148,7 @@ class databaseAccess{//TODO: admin-mode options for webinterface
 		String write = "question: "+quest.question+", answer: "+quest.answer+", level: "+quest.level+", oflag: "+o+", flag: "+l+", lang: "+quest.lang+", m: "+m+", f: "+f+", p: "+p+"\n";
 		FileWriter fw;
 		try {
-			fw = new FileWriter("/home/max/.questgame/fakedb.txt", true);
+			fw = new FileWriter(homepath+"/.questgame/fakedb.txt", true);
 		} catch (IOException e) {
 			System.out.println("Fehler im Testfall... na toll");
 			return;

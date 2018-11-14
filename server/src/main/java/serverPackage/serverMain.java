@@ -11,6 +11,8 @@ public class serverMain {
 	 */
 	private final int port = 9000;
 	
+	private final String homepath = System.getProperty("user.home");
+	
 	/*
 	 * Object which implements the databaseAccess interface
 	 */
@@ -22,7 +24,7 @@ public class serverMain {
 	 * Constructor which uses an externally initialized databaseAccess object
 	 */
 	public serverMain() throws IOException {
-		database = new databaseAccess();
+		database = new databaseAccess(homepath);
 		server = initialiseServer();
 	}
 	
@@ -32,7 +34,7 @@ public class serverMain {
 	private HttpServer initialiseServer() throws IOException{
 		HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 		server.createContext("/", new welcomeHandler());
-		server.createContext("/questions", new dataHandler(database));
+		server.createContext("/questions", new dataHandler(database, homepath));
 		server.setExecutor(null);
 		return server;
 	}
