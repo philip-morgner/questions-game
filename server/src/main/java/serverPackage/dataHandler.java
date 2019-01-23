@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.sun.net.httpserver.*;
@@ -27,9 +28,9 @@ public class dataHandler implements HttpHandler{
 		//status message
 		String ipAddress = he.getRequestHeaders().getFirst("X-FORWARDED-FOR");  
 		   if (ipAddress == null) {  
-		       ipAddress = he.getRemoteAddress().getAddress().toString();  
+		       ipAddress = he.getRemoteAddress().getAddress().toString();
 		   }
-		System.out.println("Incoming query from: "+ipAddress);
+		System.out.println("Incoming query from: "+ipAddress+"\nMethod: "+he.getRequestMethod()+"\nTime: "+new Date());
 		
 		if(he.getRequestMethod().equalsIgnoreCase("GET"))echoGet(he);
 		else if(he.getRequestMethod().equalsIgnoreCase("POST"))echoPost(he);
@@ -70,8 +71,7 @@ public class dataHandler implements HttpHandler{
 				if(par[0].equalsIgnoreCase("lang"))lang=par[1].toLowerCase();
 				if(par[0].equalsIgnoreCase("players"))playerjson=par[1];
 			}
-		}
-		
+		}		
 		
 		//minimal query: one player and one flag true
 		if((!l&&!o&&!c)||playerjson.equals("")||playerjson==null||playerjson.equals("\0")) {
@@ -91,6 +91,7 @@ public class dataHandler implements HttpHandler{
 		}
 		
 		String response = this.database.getQuestions(lang, l, o, c, players);//TODO: Exception handling
+		
 		send(he, response, "application/json", 200);
 	}
 	
@@ -239,7 +240,7 @@ public class dataHandler implements HttpHandler{
 		String sex = "";
 		
 		//translate string to params
-		String [] params = json.split(",");//remove structural chars
+		String [] params = json.split(",");
 		String[][] param = new String[params.length][2];
 		for(int i = 0;i < params.length; i++) {
 			param[i] = params[i].split(":");

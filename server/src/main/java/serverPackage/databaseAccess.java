@@ -12,6 +12,7 @@ import java.util.LinkedList;
 
 class databaseAccess{//TODO: admin-mode options for webinterface
 	private final String homepath;
+	
 	public databaseAccess(String homepath) {
 		this.homepath = homepath;
 	}
@@ -22,6 +23,7 @@ class databaseAccess{//TODO: admin-mode options for webinterface
 	 * Reads custom entries by means of getFromDb and refactors the question strings
 	 */
 	public String getQuestions(String lang, boolean lflag, boolean oflag, boolean cflag, LinkedList<Player> players) {
+		if(lang.equals("all"))lang = "";
 		//read values from playerarray
 		int maxlevel = 0;
 		int[] m = new int[3];
@@ -39,6 +41,8 @@ class databaseAccess{//TODO: admin-mode options for webinterface
 		//read entries and shuffle
 		LinkedList<Question> quests = getFromDb(lang, lflag, oflag, cflag, maxlevel, m, f);
 		Collections.shuffle(quests);
+		
+		if(quests.size() == 0)return "[]";
 		
 		//build JSON
 		String json = "[";
@@ -67,10 +71,38 @@ class databaseAccess{//TODO: admin-mode options for webinterface
 	}
 	
 	/*
+	 * Returns all Questions in database
+	 */
+	private LinkedList<Question> getAll(){
+		int[] m = new int[3];
+		int[] f = new int[3];
+		for(int i = 0; i<3; i++) {
+			f[i]=10;
+			m[i]=10;
+		}
+		return getFromDb("all", true, true, true, 2, m, f);
+	}
+	
+	/*
+	 * Store question
+	 */
+	public void storeQuestion(Question toStore, boolean toMark) {
+		//read in custom values for storing the question
+		int o = 0;
+		int l = 0;
+		if(toStore.outdoor)o=1;
+		if(toStore.love)l=1;
+		int p = (toStore.question.length() - toStore.question.replace("%p", "").length())/2;
+		int f = (toStore.question.length() - toStore.question.replace("%f", "").length())/2;
+		int m = (toStore.question.length() - toStore.question.replace("%m", "").length())/2;
+		this.storeInDB(o, l, p, f, m, toStore.question, toStore.answer, toStore.level, toStore.lang, toMark);;
+	}
+	
+	/*
 	 * Store question, could be marked as to-be-reviewed
 	 */
-	public void storeQuestion(Question quest, boolean marked) {//TODO
-		storeInFile(quest);
+	private void storeInDB(int o, int l, int p, int f, int m, String question, String answer, int level, String lang, boolean marked) {//TODO
+		storeInFile(o, l, p, f, m, question, answer, level, lang);
 	}
 	
 	/*
@@ -124,7 +156,7 @@ class databaseAccess{//TODO: admin-mode options for webinterface
 			Question qu = new Question(question, answer, currlang, currlevel, curroflag, currlflag);
 			
 			//add question if according to custom values
-			if(currlang.equalsIgnoreCase(lang)&&currlevel<=maxlevel&&(!currlflag||l)&&(!curroflag||o)&&(c||currlflag||curroflag)&&currm<=m[currlevel]&&currf<=f[currlevel]&&currp<=m[currlevel]+f[currlevel]) {
+			if((lang.equals("all")||currlang.equalsIgnoreCase(lang))&&currlevel<=maxlevel&&(!currlflag||l)&&(!curroflag||o)&&(c||currlflag||curroflag)&&currm<=m[currlevel]&&currf<=f[currlevel]&&currp<=m[currlevel]+f[currlevel]) {
 				list.add(qu);
 			}
 		}
@@ -135,17 +167,9 @@ class databaseAccess{//TODO: admin-mode options for webinterface
 	/*
 	 * testing: store Question in file
 	 */
-	private void storeInFile(Question quest) {
-		//read in custom values for storing the question
-		int o = 0;
-		int l = 0;
-		if(quest.outdoor)o=1;
-		if(quest.love)l=1;
-		int p = (quest.question.length() - quest.question.replace("%p", "").length())/2;
-		int f = (quest.question.length() - quest.question.replace("%f", "").length())/2;
-		int m = (quest.question.length() - quest.question.replace("%m", "").length())/2;
+	private void storeInFile(int o, int l, int p, int f, int m, String question, String answer, int level, String lang) {
 		//string to write to file
-		String write = "question: "+quest.question+", answer: "+quest.answer+", level: "+quest.level+", oflag: "+o+", flag: "+l+", lang: "+quest.lang+", m: "+m+", f: "+f+", p: "+p+"\n";
+		String write = "question: "+question+", answer: "+answer+", level: "+level+", oflag: "+o+", flag: "+l+", lang: "+lang+", m: "+m+", f: "+f+", p: "+p+"\n";
 		FileWriter fw;
 		try {
 			fw = new FileWriter(homepath+"/.questgame/fakedb.txt", true);
