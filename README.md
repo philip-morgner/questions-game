@@ -4,4 +4,8 @@ requirements: expo, yarn
 
 How to start:
 
-cd client && yarn start
+cd server && ./install.sh && ./execute.sh
+
+Ctrl + Shift + t
+
+cd client && yarn && yarn start
