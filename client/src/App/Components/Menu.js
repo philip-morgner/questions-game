@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 import NavButton from "./NavButton";
 import type { Route } from "./NavButton";
 import Main from "./Main";
-import PlayerSetUpList from "./PlayerSetUpList";
+import PlayerSetUpList from "./PlayerSetUp";
 import AddQuestionUI from "./AddQuestionUI";
 
 const styles = StyleSheet.create({

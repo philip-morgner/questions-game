@@ -4,7 +4,7 @@ import React from "react";
 import { createStackNavigator } from "react-navigation";
 
 import LandingPage from "./src/App/Components/LandingPage";
-import PlayerSetUpList from "./src/App/Components/PlayerSetUpList";
+import PlayerSetUpList from "./src/App/Components/PlayerSetUp";
 import Main from "./src/App/Components/Main";
 import Menu from "./src/App/Components/Menu";
 import AddQuestionUI from "./src/App/Components/AddQuestionUI";

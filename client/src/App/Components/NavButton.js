@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from "prop-types";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Font } from "expo";
@@ -8,12 +7,13 @@ import { Font } from "expo";
 export type Route = {
   component: Object,
   title: string,
-  passProps?: Object,
 };
 
 type Props = {
-  route: Route,
   navigation: Object,
+  route: Route,
+  onPress?: Function,
+  data?: any,
   color?: string,
 };
 type State = { fontLoaded: boolean };
@@ -30,7 +30,7 @@ const styles = (fontLoaded: boolean) => (colorProp?: string) =>
       justifyContent: "center",
       width: "80%",
       height: 50,
-      backgroundColor: !!colorProp ? colorProp : "#3C85BF",
+      backgroundColor: colorProp || "#3C85BF",
       borderRadius: 25,
       margin: 16,
     },
@@ -52,19 +52,25 @@ class NavButton extends React.Component<Props, State> {
     this.setState({ fontLoaded: true });
   }
 
-  navigateTo = (route: Route) => () => {
-    this.props.navigation.navigate(route);
+  handlePress = async () => {
+    const { navigation, route, onPress } = this.props;
+    const navigateTo = (route: string, props: Object) => {
+      navigation.navigate(route, props);
+    };
+    let data;
+    if (onPress) {
+      data = await onPress();
+    }
+    navigateTo(route.title, { data });
   };
 
   render() {
     const { route, color } = this.props;
-    const styleReady = styles(this.state.fontLoaded);
+    const style = styles(this.state.fontLoaded);
     return (
-      <TouchableOpacity
-        style={styleReady().container}
-        onPress={this.navigateTo(route.title)}>
-        <View style={styleReady(color).button}>
-          <Text style={styleReady().buttonText}>{route.title}</Text>
+      <TouchableOpacity style={style().container} onPress={this.handlePress}>
+        <View style={style(color).button}>
+          <Text style={style().buttonText}>{route.title}</Text>
         </View>
       </TouchableOpacity>
     );
