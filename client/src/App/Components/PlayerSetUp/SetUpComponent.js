@@ -4,7 +4,6 @@ import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { CheckBox, ButtonGroup } from "react-native-elements";
 import { Font } from "expo";
 import debounce from "lodash.debounce";
-import _ from "lodash";
 
 import { pathOr } from "ramda";
 import type { Player } from "../PlayerSetUp";

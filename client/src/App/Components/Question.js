@@ -1,4 +1,4 @@
-// flow has issues with map and promise types
+// @flow
 
 import React from "react";
 import { View, Text, StyleSheet, TouchableWithoutFeedback } from "react-native";
@@ -70,7 +70,22 @@ const styles = (fontLoaded?: boolean, type?: string) =>
     },
   });
 
-export default class Question extends React.Component {
+type Props = {
+  question: string,
+  answer: string,
+  moveBack: () => void,
+  moveForward: () => void,
+  navigation: Object,
+};
+
+type State = {
+  fontLoaded: boolean,
+  remaining: number,
+  timeIsUp: boolean,
+  timerId?: IntervalID,
+};
+
+export default class Question extends React.Component<Props, State> {
   state = {
     fontLoaded: false,
     remaining: 5,
@@ -86,7 +101,7 @@ export default class Question extends React.Component {
     this.setState({ fontLoaded: true });
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     if (this.props.answer !== prevProps.answer) {
       clearInterval(this.state.timerId);
       this.setState({
@@ -109,6 +124,7 @@ export default class Question extends React.Component {
       { name: "END", onPress: endGame },
       { name: "\u2192", onPress: moveForward },
     ];
+    // $FlowFixMe
     return actions.map(({ name, onPress }) => (
       <View key={name} style={styles().actionWrapper}>
         <Text
@@ -124,7 +140,7 @@ export default class Question extends React.Component {
     ));
   };
 
-  renderCard = type => {
+  renderCard = (type: string) => {
     const { answer, question, moveForward } = this.props;
     const { fontLoaded, timeIsUp } = this.state;
     return (
@@ -145,7 +161,7 @@ export default class Question extends React.Component {
     );
   };
 
-  renderTimer = answer => {
+  renderTimer = (answer: string) => {
     const { fontLoaded, remaining, timerId } = this.state;
 
     const end = () => {

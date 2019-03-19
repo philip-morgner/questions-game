@@ -6,6 +6,7 @@ import {
   ScrollView,
   Keyboard,
   // View,
+  ListView,
   KeyboardAvoidingView,
 } from "react-native";
 import {
@@ -191,6 +192,7 @@ export default class PlayerSetUpList extends React.Component<Props, State> {
       <KeyboardAvoidingView style={styles.page} behavior="padding" enabled>
         <ScrollView
           contentContainerStyle={styles.list}
+          onContentSizeChange={this.scrollToEnd}
           // $FlowFixMe
           ref={ref => (this.scrollView = ref)}>
           {this.renderPlayerSetUpList(count)}
