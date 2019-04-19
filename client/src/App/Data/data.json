@@ -1,0 +1,59 @@
+[
+  {
+    "type": "question",
+    "mode": 0,
+    "data": {
+      "question": "person, Was hat mehr reinen Alkohol: Ein 4cl Shot mit 40% Tequila oder ein 0,5l Bier mit 5%?",
+      "answer": "Shot: 16ml, Bier: 25ml",
+      "penalty": 5,
+      "reward": 8,
+      "time": 60
+    }
+  },
+  {
+    "type": "task",
+    "mode": 0,
+    "data": {
+      "task": "person, 15 Liegestütze in 30s oder 25 Liegestütze ohne Zeit!",
+      "penalty": 5,
+      "reward": 8,
+      "time": 30
+    }
+  },
+  {
+    "type": "question",
+    "mode": 1,
+    "data": {
+      "question": "person, welche Farbe hat persons Unterwäsche?",
+      "penalty": 5,
+      "reward": 5
+    }
+  },
+  {
+    "type": "task",
+    "mode": 1,
+    "data": {
+      "task": "person, küss person auf den Mund für 3 Sekunden!",
+      "penalty": 10,
+      "reward": 10
+    }
+  },
+  {
+    "type": "task",
+    "mode": 0,
+    "data": {
+      "task": "person, Stöckchenspiel! Dreh dich 30 Runden um einen Stock, den du mit ausgestrecktem Arm vor dir hältst, wirf ihn auf den Boden und spring rüber!",
+      "penalty": -1,
+      "reward": -1
+    }
+  },
+  {
+    "type": "task",
+    "mode": 1,
+    "data": {
+      "task": "person, person: wer öfter gekotzt hat, trinkt",
+      "penalty": 5,
+      "reward": 0
+    }
+  }
+]

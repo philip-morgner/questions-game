@@ -8,7 +8,6 @@ import {
   TouchableWithoutFeedback,
   TextInput,
 } from "react-native";
-import Question from "./Question";
 
 const styles = StyleSheet.create({
   pageStyle: {

@@ -5,8 +5,9 @@ import { View, Text, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { Font } from "expo";
 import NavButton from "./NavButton";
 import Menu from "./Menu";
+import { path, pathOr, isNil } from "ramda";
 
-const styles = (fontLoaded?: boolean, type?: string) =>
+const styles = (fontLoaded?: boolean, hidden?: boolean) =>
   StyleSheet.create({
     text: {
       fontSize: 28,
@@ -15,10 +16,10 @@ const styles = (fontLoaded?: boolean, type?: string) =>
     },
     wrapper: {
       flex: 1,
-      backgroundColor: type === "question" ? "lightblue" : "#FEF387",
+      backgroundColor: hidden ? "#FEF387" : "lightblue",
       borderRadius: 15,
-      marginTop: type === "question" ? 16 : 8,
-      marginBottom: type === "question" ? 8 : 16,
+      marginTop: hidden ? 16 : 8,
+      marginBottom: hidden ? 8 : 16,
       padding: 8,
     },
     action: {
@@ -70,9 +71,16 @@ const styles = (fontLoaded?: boolean, type?: string) =>
     },
   });
 
-type Props = {
+export type DataUnit = {
+  type: "question" | "task",
   question: string,
-  answer: string,
+  task: string,
+  answer?: string,
+  time?: number,
+};
+
+type Props = {
+  unit: DataUnit,
   moveBack: () => void,
   moveForward: () => void,
   navigation: Object,
@@ -85,10 +93,12 @@ type State = {
   timerId?: IntervalID,
 };
 
+// TODO
+// size of cards should be consistent
 export default class Question extends React.Component<Props, State> {
   state = {
     fontLoaded: false,
-    remaining: 5,
+    remaining: pathOr(0, ["unit", "time"], this.props),
     timeIsUp: false,
     timerId: undefined,
   };
@@ -97,16 +107,18 @@ export default class Question extends React.Component<Props, State> {
     await Font.loadAsync({
       BalooBhai: require("../../../assets/fonts/BalooBhai-Regular.ttf"),
     });
-    // const fonts = ["Calligraffitti", "GiveYouGlory", "SedgewickAve"];
     this.setState({ fontLoaded: true });
   }
 
-  componentDidUpdate(prevProps: Props) {
-    if (this.props.answer !== prevProps.answer) {
-      clearInterval(this.state.timerId);
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (
+      prevProps.unit[prevProps.unit.type] !==
+      this.props.unit[this.props.unit.type]
+    ) {
+      clearInterval(prevState.timerId);
       this.setState({
         timerId: undefined,
-        remaining: 5,
+        remaining: pathOr(0, ["unit", "time"], this.props),
         timeIsUp: false,
       });
     }
@@ -140,28 +152,45 @@ export default class Question extends React.Component<Props, State> {
     ));
   };
 
-  renderCard = (type: string) => {
-    const { answer, question, moveForward } = this.props;
+  renderCards = (type: string) => {
+    const {
+      unit: { answer, [type]: data },
+      moveForward,
+    } = this.props;
     const { fontLoaded, timeIsUp } = this.state;
-    return (
+
+    const renderCard = (
+      cardData: string = "",
+      key: string,
+      hide: boolean = false
+    ) => (
       <TouchableWithoutFeedback
-        key={type}
+        key={key}
         disabled={!timeIsUp}
         onPress={moveForward}>
-        <View style={styles(fontLoaded, type).wrapper}>
-          <Text style={styles(fontLoaded).text}>
-            {type === "question"
-              ? question
-              : this.state.timeIsUp
-              ? answer
-              : "?"}
-          </Text>
+        <View style={styles(fontLoaded, hide).wrapper}>
+          <Text style={styles(fontLoaded).text}>{hide ? "?" : cardData}</Text>
         </View>
       </TouchableWithoutFeedback>
     );
+
+    if (!isNil(answer)) {
+      return [
+        renderCard(data, "question"),
+        renderCard(answer, "answer", !timeIsUp),
+      ];
+    }
+
+    return renderCard(data, "task");
   };
 
-  renderTimer = (answer: string) => {
+  renderClock = (remaining: number) => {
+    if (remaining === 60) return "1:00";
+    if (remaining > 9) return "0:" + remaining;
+    return "0:0" + remaining;
+  };
+
+  renderTimer = () => {
     const { fontLoaded, remaining, timerId } = this.state;
 
     const end = () => {
@@ -178,6 +207,7 @@ export default class Question extends React.Component<Props, State> {
     };
 
     const start = () => {
+      console.log("press");
       const timerId = setInterval(countDown, 1000);
       this.setState({ timerId });
     };
@@ -185,11 +215,11 @@ export default class Question extends React.Component<Props, State> {
     return (
       <View style={styles().footer}>
         <Text style={styles(fontLoaded).timer}>
-          {timerId && `0:${remaining < 10 ? "0" : ""}${remaining}`}
+          {timerId && this.renderClock(remaining)}
         </Text>
         <View style={styles().start}>
           <Text style={styles(fontLoaded).text} onPress={timerId ? end : start}>
-            {timerId ? "Answer" : "Start"}
+            {timerId ? "Stop" : "Start"}
           </Text>
         </View>
       </View>
@@ -197,18 +227,19 @@ export default class Question extends React.Component<Props, State> {
   };
 
   render() {
-    const { question, answer } = this.props;
     const { timeIsUp } = this.state;
+    const { type, time } = pathOr(null, ["unit"], this.props);
+    const data = pathOr("", ["unit", type], this.props);
 
     return [
       <View key="header" style={styles().header}>
         {this.renderActions()}
       </View>,
       <View key="body" style={styles().body}>
-        {[this.renderCard("question"), this.renderCard("answer")]}
+        {this.renderCards(type)}
       </View>,
       <View key="footer" style={styles().footer}>
-        {answer !== "" && this.renderTimer(answer)}
+        {!isNil(time) && this.renderTimer()}
       </View>,
     ];
   }

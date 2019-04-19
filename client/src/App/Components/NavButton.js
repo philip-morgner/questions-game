@@ -5,7 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Font } from "expo";
 
 export type Route = {
-  component: Object,
+  component: string,
   title: string,
 };
 
@@ -22,13 +22,12 @@ const styles = (fontLoaded: boolean) => (colorProp?: string) =>
   StyleSheet.create({
     container: {
       flexDirection: "row",
-      width: "80%",
+      margin: "auto",
     },
     button: {
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      width: "80%",
       height: 50,
       backgroundColor: colorProp || "#3C85BF",
       borderRadius: 25,
@@ -61,7 +60,7 @@ class NavButton extends React.Component<Props, State> {
     if (onPress) {
       data = await onPress();
     }
-    navigateTo(route.title, { data });
+    navigateTo(route.component, { data });
   };
 
   render() {

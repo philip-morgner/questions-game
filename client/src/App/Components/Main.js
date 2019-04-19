@@ -2,8 +2,11 @@
 
 import React from "react";
 import { View, StyleSheet, Text } from "react-native";
-import { times, identity } from "ramda";
-import Question from "./Question";
+import { times, identity, pathOr } from "ramda";
+import Unit from "./Unit";
+import type { DataUnit } from "./Unit";
+
+import { prepareGame } from "../utils/prepareGame";
 
 const styles = StyleSheet.create({
   page: {
@@ -38,14 +41,15 @@ type Props = {
 
 type State = {
   index: number,
-  data: Array<Object>,
+  data: Array<DataUnit>,
   randomSeq: Array<number>,
 };
 
 export default class Main extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const data = JSON.parse(props.navigation.getParam("data", []));
+    const players = props.navigation.getParam("data", []);
+    const data = prepareGame(players);
     this.state = {
       index: 0,
       data,
@@ -72,6 +76,16 @@ export default class Main extends React.Component<Props, State> {
     }
   };
 
+  getUnit = () => {
+    const { randomSeq, index, data } = this.state;
+    if (index !== -1) {
+      const pos = randomSeq[index];
+
+      return data[pos];
+    }
+    return "Game Over\nChug your Drink!";
+  };
+
   getQuestion = () => {
     const { randomSeq, index, data } = this.state;
     if (index !== -1) {
@@ -94,14 +108,13 @@ export default class Main extends React.Component<Props, State> {
 
   render() {
     const { navigation } = this.props;
-    const question = this.getQuestion();
+    const unit = this.getUnit();
     const answer = this.getAnswer();
 
     return (
       <View style={styles.page}>
-        <Question
-          question={question}
-          answer={answer}
+        <Unit
+          unit={unit}
           moveBack={this.handleMoveBack}
           moveForward={this.handleMoveForward}
           navigation={navigation}

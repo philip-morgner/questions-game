@@ -13,14 +13,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    margin: "10%",
   },
 });
 
 const menuOptions = [
-  { title: "PlayerSetUpList", component: PlayerSetUpList },
-  { title: "AddQuestionUI", component: AddQuestionUI },
-  { title: "Main", component: Main },
-  { title: "Main", component: Main },
+  { title: "Normales Spiel", component: "PlayerSetUpList" },
+  { title: "Modus wählen", component: "PlayerSetUpList" },
+  { title: "Datenbank erweitern", component: "AddQuestionUI" },
 ];
 
 type Props = {
@@ -29,11 +29,18 @@ type Props = {
 
 type State = {};
 
-// stateless => rewrite!
 export default class Menu extends React.Component<Props, State> {
   renderMenuButton = (route: Route, i: number) => {
+    const color = "green";
     const { navigation } = this.props;
-    return <NavButton key={i} route={route} navigation={navigation} />;
+    return (
+      <NavButton
+        key={i}
+        route={route}
+        navigation={navigation}
+        color={route.title === "Normales Spiel" ? color : undefined}
+      />
+    );
   };
   render() {
     return (
