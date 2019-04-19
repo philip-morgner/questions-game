@@ -2,12 +2,10 @@
 import React from "react";
 import {
   StyleSheet,
-  TextInput,
   ScrollView,
   Keyboard,
-  // View,
-  ListView,
   KeyboardAvoidingView,
+  Text,
 } from "react-native";
 import {
   times,
@@ -28,26 +26,13 @@ import PlayerSetUp from "./SetUpComponent";
 import SetUpNew from "./SetUpNew";
 import type { Player } from "../PlayerSetUp";
 
-const IP_MAXB = "172.20.10.7";
-const LOCAL = "95.91.211.99";
-
-const mockedData = [
-  { question: "hallo", answer: "und hier auch die answer" },
-  { question: "hier", answer: "und hier auch die answer1" },
-  { question: "die", answer: "und hier auch die answer2" },
-  { question: "question", answer: "und hier auch die answer3" },
-  { question: "hallo hier die question", answer: "und hier auch die answer4" },
-];
-
-const mockedServerData = JSON.stringify(mockedData);
-
 const styles = StyleSheet.create({
   page: {
     flex: 1,
+    paddingTop: 20,
   },
   list: {
     alignItems: "center",
-    paddingTop: 65,
   },
   input: {
     alignSelf: "flex-start",
@@ -62,9 +47,11 @@ const styles = StyleSheet.create({
 });
 
 const newId = (count: number) =>
-  Math.random()
-    .toString(2 + count)
-    .substr(2, 9);
+  Number(
+    Math.random()
+      .toString(2 + count)
+      .substr(2, 9)
+  );
 
 type Props = {
   navigation: Object,
@@ -76,6 +63,11 @@ type State = {
   players: Array<Player>,
 };
 
+// TODOS
+// do not start game without players, no doubled players
+// do not navigate back to playersetup -> in-game possibilty to change setup
+// make landscape mode available
+// think about if only one gender participates
 export default class PlayerSetUpList extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -93,7 +85,7 @@ export default class PlayerSetUpList extends React.Component<Props, State> {
 
   addPlayer = () => {
     let { players, count } = this.state;
-    const player = { name: "", sex: "m", level: 0, id: newId(count) };
+    const player = { name: "", gender: "m", level: 0, id: newId(count) };
     players.push(player);
     count += 1;
     this.setState({ players, count });
@@ -128,23 +120,13 @@ export default class PlayerSetUpList extends React.Component<Props, State> {
     this.setState({ players });
   };
 
-  handleSubmit = () => {
-    const players = JSON.stringify(this.state.players);
-    const encodedPlayers = encodeURI(players);
-    const url = `http://${LOCAL}:9000/questions?players=${encodedPlayers}`;
+  handleSubmit = async () => {
+    // const players = JSON.stringify(this.state.players);
+    // const encodedPlayers = encodeURI(players);
+    // const url = `http://${LOCAL}:9000/questions?players=${encodedPlayers}`;
 
-    // fetch(url)
-    //   .then(res => res.json())
-    //   .then(json => console.log("json", json))
-    //   .catch(e => console.log("error", e));
-
-    console.log("mocked fetch", mockedServerData);
-    return mockedServerData;
-  };
-
-  scrollToEnd = () => {
-    // $FlowFixMe
-    this.scrollView.scrollToEnd({ animated: true });
+    console.log("send state", this.state.players);
+    return this.state.players;
   };
 
   renderPlayerSetUp = (player: Player) => {
@@ -155,7 +137,6 @@ export default class PlayerSetUpList extends React.Component<Props, State> {
         player={player}
         setUpHandler={this.updatePlayer(id)}
         removeHandler={this.removePlayer}
-        scrollToEnd={this.scrollToEnd}
       />
     );
   };
@@ -176,12 +157,13 @@ export default class PlayerSetUpList extends React.Component<Props, State> {
 
   renderSubmit = () => {
     const { navigation } = this.props;
-    const route = { title: "Main", component: Main };
+    const route = { title: "Los geht's!", component: "Main" };
     return (
       <NavButton
         onPress={this.handleSubmit}
         route={route}
         navigation={navigation}
+        color="green"
       />
     );
   };
@@ -189,16 +171,13 @@ export default class PlayerSetUpList extends React.Component<Props, State> {
   render() {
     const { count } = this.state;
     return (
-      <KeyboardAvoidingView style={styles.page} behavior="padding" enabled>
-        <ScrollView
-          contentContainerStyle={styles.list}
-          onContentSizeChange={this.scrollToEnd}
-          // $FlowFixMe
-          ref={ref => (this.scrollView = ref)}>
+      <ScrollView contentContainerStyle={styles.list}>
+        <KeyboardAvoidingView style={styles.page} behavior="position" enabled>
+          <Text style={{ fontSize: 36, paddingTop: 40 }}>Spieler</Text>
           {this.renderPlayerSetUpList(count)}
           {this.renderSubmit()}
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </ScrollView>
     );
   }
 }

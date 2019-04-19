@@ -60,7 +60,7 @@ export default class SetUpNew extends React.Component<Props, State> {
   }
 
   renderAddPlayerButton = () => {
-    const buttonText = "+ ADD PLAYERS";
+    const buttonText = "+ Add Player";
     const { setUpHandler } = this.props;
     const { fontLoaded } = this.state;
     return (

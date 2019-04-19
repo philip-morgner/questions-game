@@ -67,26 +67,17 @@ type Props = {
   player: Player,
   setUpHandler: (attr: string) => (raw: string | number) => void,
   removeHandler: (id: number) => () => void,
-  scrollToEnd: Function,
 };
 
-type State = { fontLoaded: boolean };
+type State = {};
 
+// TODO
+// change gender checkboxes
+// think about debounced input
 export default class PlayerSetUp extends React.Component<Props, State> {
-  state = {
-    fontLoaded: false,
-  };
-
-  async componentWillMount() {
-    await Font.loadAsync({
-      BalooBhai: require("../../../../assets/fonts/BalooBhai-Regular.ttf"),
-    });
-    this.setState({ fontLoaded: true });
-  }
-
   inputHandler = (name: string) => this.props.setUpHandler("name")(name);
 
-  inputHandlerDebounced = debounce(this.inputHandler, 1000);
+  inputHandlerDebounced = debounce(this.inputHandler, 500);
 
   renderNameInput = () => {
     return (
@@ -94,7 +85,6 @@ export default class PlayerSetUp extends React.Component<Props, State> {
         autoCorrect={false}
         autoFocus={true}
         enablesReturnKeyAutomatically={true}
-        onSubmitEditing={this.props.scrollToEnd}
         returnKeyType="done"
         style={styles.input}
         placeholder="Spieler..."
@@ -113,24 +103,24 @@ export default class PlayerSetUp extends React.Component<Props, State> {
   };
 
   renderSexCheckBoxes = (selected: "m" | "w") => {
-    const sexes = ["m", "w"];
+    const genders = ["m", "w"];
     const checkedColor = "#f29959";
     const uncheckedColor = "white";
     const checkedIcon = "dot-circle-o";
     const uncheckedIcon = "circle-o";
     return (
       <View style={styles.checkboxesContainer}>
-        {sexes.map(sex => (
+        {genders.map(gender => (
           <CheckBox
-            key={sex}
-            title={sex === "w" ? "weiblich" : "männlich"}
+            key={gender}
+            title={gender === "w" ? "\u2640" : "\u2642"}
             containerStyle={styles.checkboxes}
             checkedIcon={checkedIcon}
             uncheckedIcon={uncheckedIcon}
             checkedColor={checkedColor}
             uncheckedColor={uncheckedColor}
-            checked={selected === sex}
-            onPress={() => this.props.setUpHandler("sex")(sex)}
+            checked={selected === gender}
+            onPress={() => this.props.setUpHandler("gender")(gender)}
           />
         ))}
       </View>
@@ -155,15 +145,15 @@ export default class PlayerSetUp extends React.Component<Props, State> {
   };
 
   render() {
-    const { sex, level, id } = pathOr(
-      { sex: "m", level: 0, id: undefined },
+    const { gender, level, id } = pathOr(
+      { gender: "m", level: 0, id: undefined },
       ["player"],
       this.props
     );
 
     return (
       <View style={styles.container}>
-        {this.renderSexCheckBoxes(sex)}
+        {this.renderSexCheckBoxes(gender)}
         {this.renderRemoveButton(id)}
         {this.renderNameInput()}
         {this.renderLevelButtonGroup(level)}
