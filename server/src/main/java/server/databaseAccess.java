@@ -1,4 +1,4 @@
-package serverPackage;
+package server;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -7,8 +7,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
+
+import server.pom.GetParams;
+import server.pom.Player;
+import server.pom.Question;
 
 class databaseAccess{//TODO: admin-mode options for webinterface
 	private final String homepath;
@@ -22,8 +29,8 @@ class databaseAccess{//TODO: admin-mode options for webinterface
 	/*
 	 * Reads custom entries by means of getFromDb and refactors the question strings
 	 */
-	public String getQuestions(String lang, boolean lflag, boolean oflag, boolean cflag, LinkedList<Player> players) {
-		if(lang.equals("all"))lang = "";
+	public String getQuestions(GetParams params) {
+		if(params.lang.equals("all"))params.lang = "";
 		//read values from playerarray
 		int maxlevel = 0;
 		int[] m = new int[3];
@@ -32,14 +39,14 @@ class databaseAccess{//TODO: admin-mode options for webinterface
 			m[i]=0;
 			f[i]=0;
 		}
-		for(Player p : players) {
-			if(p.sex.equals("m"))for(int i = p.level; i>=0; i--)m[i]++;
-			if(p.sex.equals("f"))for(int i = p.level; i>=0; i--)f[i]++;
+		for(Player p : params.players) {
+			if(p.gender.equals("m"))for(int i = p.level; i>=0; i--)m[i]++;
+			if(p.gender.equals("f"))for(int i = p.level; i>=0; i--)f[i]++;
 			if(p.level>maxlevel)maxlevel = p.level;
 		}
 		
 		//read entries and shuffle
-		LinkedList<Question> quests = getFromDb(lang, lflag, oflag, cflag, maxlevel, m, f);
+		LinkedList<Question> quests = getFromDb(params.lang, params.love, params.outdoor, params.classic, maxlevel, m, f);
 		Collections.shuffle(quests);
 		
 		if(quests.size() == 0)return "[]";
@@ -48,15 +55,17 @@ class databaseAccess{//TODO: admin-mode options for webinterface
 		String json = "[";
 		for(int i = 0; i<MAX_NUM_QUESTIONS&&i<quests.size();i++) {
 			Question q = quests.get(i);
-			Collections.shuffle(players);
+			List<Player> tempList = Arrays.asList(params.players);
+			Collections.shuffle(tempList);
+			params.players = (Player[]) tempList.toArray();
 			//refactor question (replace %m, %f and %p)
-			for(Player p : players) {
+			for(Player p : params.players) {
 				if(!q.question.contains("%m")&&!q.question.contains("%f")&&!q.question.contains("%p")) {
 					break;
 				}
-				if(p.level >= q.level && (q.question.contains("%"+p.sex)||q.question.contains("%p"))) {
-					if(q.question.indexOf("%"+p.sex)>-1&&(q.question.indexOf("%"+p.sex)<q.question.indexOf("%p")||q.question.indexOf("%p")==-1)) {
-						q.question = q.question.replaceFirst("(%"+p.sex+")", p.name);
+				if(p.level >= q.level && (q.question.contains("%"+p.gender)||q.question.contains("%p"))) {
+					if(q.question.indexOf("%"+p.gender)>-1&&(q.question.indexOf("%"+p.gender)<q.question.indexOf("%p")||q.question.indexOf("%p")==-1)) {
+						q.question = q.question.replaceFirst("(%"+p.gender+")", p.name);
 					}
 					else {
 						q.question = q.question.replaceFirst("(%p)", p.name);

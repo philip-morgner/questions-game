@@ -1,13 +1,13 @@
-package serverPackage;
+package server.pom;
 
-class Question {//simple interface to ease datahandling in other classes
+public class Question {//simple interface to ease datahandling in other classes
 
-	String question;
-	String answer;
-	String lang;
-	int level;
-	boolean outdoor;
-	boolean love;
+	public String question;
+	public String answer;
+	public String lang;
+	public int level;
+	public boolean outdoor;
+	public boolean love;
 	
 	public Question(String q, String answer, String lang, int a, boolean o, boolean l) {
 		this.question = q;
