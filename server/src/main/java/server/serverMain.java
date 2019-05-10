@@ -1,22 +1,29 @@
-package serverPackage;
+package server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import com.sun.net.httpserver.*;
 
+import server.databases.*;
+import server.handlers.*;
+
+//TODO:
+	//BACKEND:
+		//HTTPS
+		//ADD USER
+		//ADMIN FUNCTIONS
+	//WEBINTERFACE:
+		//SEE ALL QUESTIONS/ EDIT THEM
+		//EDIT ADMINS -> SUPERADMIN ROLE
+		//REMOVE MARKED ATTRIBUTE FROM QUESTIONS
 public class serverMain {
 	/*
 	 * Port which the server should use
 	 */
-	private final int port = 9000;
+	private static final int port = 9000;
 	
-	private final String homepath = System.getProperty("user.home");
-	
-	/*
-	 * Object which implements the databaseAccess interface
-	 */
-	private final databaseAccess database;
+	private static final String homepath = System.getProperty("user.home");
 	
 	private final HttpServer server;
 	
@@ -24,7 +31,8 @@ public class serverMain {
 	 * Constructor which uses an externally initialized databaseAccess object
 	 */
 	public serverMain() throws IOException {
-		database = new databaseAccess(homepath);
+		QuestionDatabase.GetOrCreate().setPath(homepath + "/.questgame/questDB");
+		LoginDatabase.GetOrCreate().setPath(homepath + "/.questgame/loginDB");
 		server = initialiseServer();
 	}
 	
@@ -33,8 +41,9 @@ public class serverMain {
 	 */
 	private HttpServer initialiseServer() throws IOException{
 		HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-		server.createContext("/", new welcomeHandler());
-		server.createContext("/questions", new dataHandler(database, homepath));
+		server.createContext("/", new WelcomeHandler());
+		server.createContext("/data/read", new ReadHandler());
+		server.createContext("/data/write", new WriteHandler());
 		server.setExecutor(null);
 		return server;
 	}
@@ -54,8 +63,9 @@ public class serverMain {
 		try {
 			server = new serverMain();
 			server.start();
-		} catch (IOException e) {
-			System.out.println("Fehler beim Serverstart");
+		} catch (Exception e) {
+			System.out.println("Error when starting server:");
+			e.printStackTrace();
 		}
 	}
 }
