@@ -5,9 +5,18 @@ import java.net.InetSocketAddress;
 
 import com.sun.net.httpserver.*;
 
-import server.databases.LoginDatabase;
-import server.databases.QuestionDatabase;
+import server.databases.*;
+import server.handlers.*;
 
+//TODO:
+	//BACKEND:
+		//HTTPS
+		//ADD USER
+		//ADMIN FUNCTIONS
+	//WEBINTERFACE:
+		//SEE ALL QUESTIONS/ EDIT THEM
+		//EDIT ADMINS -> SUPERADMIN ROLE
+		//REMOVE MARKED ATTRIBUTE FROM QUESTIONS
 public class serverMain {
 	/*
 	 * Port which the server should use
@@ -32,7 +41,7 @@ public class serverMain {
 	 */
 	private HttpServer initialiseServer() throws IOException{
 		HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-		server.createContext("/", new welcomeHandler());
+		server.createContext("/", new WelcomeHandler());
 		server.createContext("/data/read", new ReadHandler());
 		server.createContext("/data/write", new WriteHandler());
 		server.setExecutor(null);
