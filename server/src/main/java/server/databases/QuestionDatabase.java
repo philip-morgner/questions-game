@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 import server.pom.ReadParams;
-import server.pom.Question;
+import server.pom.Task;
 
 public class QuestionDatabase {
 	private static QuestionDatabase Instance = null;
@@ -18,9 +18,9 @@ public class QuestionDatabase {
 	/*
 	 * Reads custom entries by means of getFromDb and refactors the question strings
 	 */
-	public LinkedList<Question> getQuestions(ReadParams params) throws Exception {
+	public LinkedList<Task> getQuestions(ReadParams params) throws Exception {
 		//read entries and shuffle and cap
-		LinkedList<Question> result = getFromDb(params);
+		LinkedList<Task> result = getFromDb(params);
 		
 		Collections.shuffle(result);
 		
@@ -33,7 +33,7 @@ public class QuestionDatabase {
 	/*
 	 * Store question
 	 */
-	public void storeQuestion(Question toStore) throws Exception {
+	public void storeQuestion(Task toStore) throws Exception {
 		FileOutputStream temp = new FileOutputStream(dbFile, true);
 		ObjectOutputStream stream = new ObjectOutputStream(temp);
 		stream.writeObject(toStore);
@@ -41,12 +41,12 @@ public class QuestionDatabase {
 		temp.close();
 	}
 
-	private LinkedList<Question> getFromDb(ReadParams params) throws Exception {
-		LinkedList<Question> res = new LinkedList<Question>();
+	private LinkedList<Task> getFromDb(ReadParams params) throws Exception {
+		LinkedList<Task> res = new LinkedList<Task>();
 		
 		try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(dbFile))) {
 			while(true) {
-				Question currentQuestion = (Question) stream.readObject();
+				Task currentQuestion = (Task) stream.readObject();
 				//add question if according to custom values
 				if(currentQuestion.fitsIntoParams(params)) {
 					res.add(currentQuestion);

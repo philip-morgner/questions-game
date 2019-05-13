@@ -11,7 +11,7 @@ import com.sun.net.httpserver.HttpExchange;
 
 import server.pom.CustomException;
 import server.pom.ReadParams;
-import server.pom.Question;
+import server.pom.Task;
 
 public class ReadHandler extends Handler {
 
@@ -40,17 +40,11 @@ public class ReadHandler extends Handler {
 		String body = IOUtils.toString(he.getRequestBody(), "UTF-8");
 		ReadParams params = gson.fromJson(body, ReadParams.class);	
 		
-		//minimal query: one player and one flag true
-		if((!params.love&&!params.outdoor&&!params.classic)||params.players.length < 1) {
-			System.out.println("Query was formatted wrong, sending error; Query: "+body);
-			throw new CustomException("Query has wrong format.", 2, 400);
-		}
-		
-		LinkedList<Question> questions = params.execute();
+		LinkedList<Task> questions = params.execute();
 		
 		String response = "[";
 		boolean first = true;
-		for(Question q : questions) {
+		for(Task q : questions) {
 			if(!first)
 				response = response + ", ";
 			response = response + q.toJSON(params.players);

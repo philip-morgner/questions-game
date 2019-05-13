@@ -1,0 +1,23 @@
+{
+    task: {
+        type: string (question/task), STD: "", wont store task when empty string
+        format: string (formatstring including %m/%f/%p), STD: "", wont store task when empty string
+        answer?: string (plaintext so far),
+        time?: int, STD: 0
+        penalty?: int, STD: 0
+        reward?: int, STD: 0
+        level?: int, STD: 0
+        lang?: string, STD: "de-DE"
+        outdoor?: boolean, STD: false
+        love?: boolean STD: false
+        }, 
+    username?: string, STD: "", wont try to log in when empty
+    password?: string STD: ""
+}
+MINIMAL_EXAMPLE:
+{
+    task: {
+        type: task,
+        format: "Hi"
+    }
+}
