@@ -1,1 +1,0 @@
-Object.defineProperty(exports,"__esModule",{value:true});var _SetUpList=require("./SetUpList.js");var _SetUpList2=_interopRequireDefault(_SetUpList);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}exports.default=_SetUpList2.default;
